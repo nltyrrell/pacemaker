@@ -1,0 +1,25 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{epstopdf}
+
+\graphicspath{{./figures/}{../plot_twod/figures/}}
+
+\newcommand{\epsfig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.eps}}
+\newcommand{\pngfig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.png}}
+
+
+
+\begin{document}
+\section{}
+
+\subsection{Surface, Troposphere}
+Time average from peak of forcing to six months after.\\
+\pngfig[0.5]{comp_Tmax_300}
+\pngfig[0.5]{comp_Tmax_sfc}
+\pngfig[0.5]{comp_Tmin_300}
+\pngfig[0.5]{comp_Tmin_sfc}
+
+\end{document}
+
