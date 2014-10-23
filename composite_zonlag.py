@@ -36,7 +36,7 @@ Tocean.data = ma.array(Tocean.data, mask=seamask)
 Tland.data = ma.array(Tland.data, mask=landmask)
 # --------------
 mons = 1
-lag = 5
+lag = 6
 max_i = 35 + lag
 max_f = max_i + mons
 min_i = 11 + lag
@@ -47,9 +47,10 @@ plt.ion()
 
 nlat = 5
 latmax = 40
+nlags = 6
 lat_range = np.linspace(0,latmax,nlat).astype('int')
-# hold(number of areas, number of lats, pressure levels, max/min)
-hold = np.zeros((3,nlat,temp_plv.coord('air_pressure').shape[0],2))
+# hold(number of areas, number of lats, pressure levels, max/min, lags)
+hold = np.zeros((3,nlat,temp_plv.coord('air_pressure').shape[0],2,nlags))
 i=0
 for lat  in xrange(0,latmax+1,10):
     print(lat)
@@ -72,12 +73,13 @@ for lat  in xrange(0,latmax+1,10):
                     iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tland_lat))
 
 
-    hold[0,i,:,0]   = TO_forc_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[0,i,:,1]   = TO_forc_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[1,i,:,0]   = TO_rem_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[1,i,:,1]   = TO_rem_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[2,i,:,0]   = TL_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[2,i,:,1]   = TL_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
+    for t in xrange(nlags):
+        hold[0,i,:,0]   = TO_forc_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
+        hold[0,i,:,1]   = TO_forc_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
+        hold[1,i,:,0]   = TO_rem_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
+        hold[1,i,:,1]   = TO_rem_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
+        hold[2,i,:,0]   = TL_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
+        hold[2,i,:,1]   = TL_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
 
     plt.plot(hold[1,i,:,0],pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
     plt.plot(hold[0,i,:,0],pressure,'-.',color=mc.jetloop(i,nlat),label="_nolegend_")

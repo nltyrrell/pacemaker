@@ -11,11 +11,7 @@ import sys
 import troposave as ta
 
 
-# Load in Tsfc, Ttropos (or T300hPa?)
-# calculate the regression between the timeseries
-# Tsfc = alpha * Ttropo + epsilon
-
-ncfile_path = '/home/nicholat/project/mit_tcm/access_runs/ncfiles/'
+ncfile_path = '/home/nicholat/project/pacemaker/ncfiles/'
 temp = iris.load_cube(ncfile_path + 'temp.m48.sfc.4ysl.nc')
 
 # import the ACCESS data using iris
@@ -62,7 +58,7 @@ Tland_trop = Tland.extract(tropics)
 grid_areas_trop = iris.analysis.cartography.area_weights(Tland_trop)
 TL_trop_mean = Tland_trop.collapsed(['latitude','longitude'],
                 iris.analysis.MEAN,weights=grid_areas_trop)
-mons = 4
+mons = 2
 lag = 3
 max_i = 35 + lag
 max_f = max_i + mons
@@ -81,50 +77,18 @@ plt.clf()
 plt.ion()
 plt.show()
 plt.plot(TO_max.data,pressure,color='b')
+plt.plot(-TO_min.data,pressure,'--',color='b',label="_nolegend_")
 plt.plot(TOf_max.data,pressure,color='r')
+plt.plot(-TOf_min.data,pressure,'--',color='r',label="_nolegend_")
 plt.plot(TOr_max.data,pressure,color='c')
-# plt.plot(-TO_min.data,pressure,'--',color='b')
+plt.plot(-TOr_min.data,pressure,'--',color='c',label="_nolegend_")
 plt.plot(TL_max.data,pressure,color='g')
-# plt.plot(-TL_min.data,pressure,'--',color='g')
-# plt.legend((lat_range.astype(str)),loc=0,title='Latitude')
+plt.plot(-TL_min.data,pressure,'--',color='g',label="_nolegend_")
+plt.legend(('TO','TO_forcing','TO_remote','TL'),loc=0,title='Latitude')
 plt.title('Temp profile, Tropical Ocean, Max/Min forcing') 
 plt.xlim(-0.2,1.1)
 plt.ylabel('z [hPa]')
 plt.xlabel('Temp')
 plt.gca().invert_yaxis()
-
-
-sys.exit('exiiiiiiiiit')
-
-plt.figure(1)
-qplt.pcmeshclf(Tmax,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max positive forcing')
-plt.savefig('figures/comp_Tmax_sfc.png')
-
-plt.figure(2)
-qplt.pcmeshclf(Tmin,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max negative forcing')
-plt.savefig('figures/comp_Tmin_sfc.png')
-
-plt.figure(3)
-qplt.pcmeshclf(T300max,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max positive forcing, 300hPa')
-plt.savefig('figures/comp_Tmax_300.png')
-
-plt.figure(4)
-qplt.pcmeshclf(T300min,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max negative forcing, 300hPa')
-plt.savefig('figures/comp_Tmin_300.png')
-
-# plt.figure(3)
-# qplt.pcmeshclf(T300max - T300min,vmin=-1,vmax=1,cmap=mc.jetwhite())
-# plt.savefig('figures/reg_T_sfc_RH_sfc.png')
-
-
-
-
-
-
-
-
+plt.savefig('./figures/comp_zonal_profiles.png')
 
