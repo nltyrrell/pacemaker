@@ -15,7 +15,7 @@ import troposave as ta
 # calculate the regression between the timeseries
 # Tsfc = alpha * Ttropo + epsilon
 
-ncfile_path = '/home/nicholat/project/mit_tcm/access_runs/ncfiles/'
+ncfile_path = '/home/nicholat/project/pacemaker/ncfiles/'
 temp = iris.load_cube(ncfile_path + 'temp.m48.sfc.4ysl.nc')
 
 # import the ACCESS data using iris
@@ -41,15 +41,22 @@ tropics = iris.Constraint(latitude = lambda v: -30 <= v <= 30)
 Tocean_trop = Tocean.extract(tropics)
 grid_areas_trop = iris.analysis.cartography.area_weights(Tocean_trop)
 
-temp_maxT_mean  = temp[35:41,0,::].collapsed('t',iris.analysis.MEAN)
+mons = 3
+lag = 3
+max_i = 35 + lag
+max_f = max_i + mons
+min_i = 11 + lag
+min_f = min_i + mons
+
+temp_maxT_mean  = temp[max_i:max_f,0,::].collapsed('t',iris.analysis.MEAN)
 Tmax            = temp_maxT_mean
-temp_minT_mean  = temp[11:17,0,::].collapsed('t',iris.analysis.MEAN)
+temp_minT_mean  = temp[min_i:min_f,0,::].collapsed('t',iris.analysis.MEAN)
 Tmin            = temp_minT_mean
 
 temp_300            = temp_plv.extract(iris.Constraint(air_pressure=300))
-temp_300_maxT_mean  = temp_300[35:41,::].collapsed('t',iris.analysis.MEAN)
+temp_300_maxT_mean  = temp_300[max_i:max_f,::].collapsed('t',iris.analysis.MEAN)
 T300max             = temp_300_maxT_mean
-temp_300_minT_mean  = temp_300[11:17,::].collapsed('t',iris.analysis.MEAN)
+temp_300_minT_mean  = temp_300[min_i:min_f,::].collapsed('t',iris.analysis.MEAN)
 T300min             = temp_300_minT_mean
 
 plt.figure(1)

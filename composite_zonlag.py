@@ -36,7 +36,7 @@ Tocean.data = ma.array(Tocean.data, mask=seamask)
 Tland.data = ma.array(Tland.data, mask=landmask)
 # --------------
 mons = 1
-lag = 6
+lag = 0
 max_i = 35 + lag
 max_f = max_i + mons
 min_i = 11 + lag
@@ -46,17 +46,17 @@ plt.clf()
 plt.ion()
 
 nlat = 5
-latmax = 40
-nlags = 6
+latmax = 15
+nlags = 8
 lat_range = np.linspace(0,latmax,nlat).astype('int')
 # hold(number of areas, number of lats, pressure levels, max/min, lags)
 hold = np.zeros((3,nlat,temp_plv.coord('air_pressure').shape[0],2,nlags))
 i=0
-for lat  in xrange(0,latmax+1,10):
+for lat  in xrange(0,latmax+1,15):
     print(lat)
     NHlati = lat
-    NHlatf = lat+10
-    SHlati = -lat-10
+    NHlatf = lat+15
+    SHlati = -lat-15
     SHlatf = -lat
 
     Tocean_forc = Tocean.extract(iris.Constraint(latitude = lambda v: NHlati <= v <= NHlatf, longitude = lambda l: 140 <= l <= 300))
@@ -74,25 +74,28 @@ for lat  in xrange(0,latmax+1,10):
 
 
     for t in xrange(nlags):
-        hold[0,i,:,0]   = TO_forc_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-        hold[0,i,:,1]   = TO_forc_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
-        hold[1,i,:,0]   = TO_rem_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-        hold[1,i,:,1]   = TO_rem_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
-        hold[2,i,:,0]   = TL_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-        hold[2,i,:,1]   = TL_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
-
-    plt.plot(hold[1,i,:,0],pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
-    plt.plot(hold[0,i,:,0],pressure,'-.',color=mc.jetloop(i,nlat),label="_nolegend_")
-    plt.plot(hold[2,i,:,0],pressure,linewidth=2,color=mc.jetloop(i,nlat),label=str(lat))
+        y = np.zeros((16))+t
+        hold[0,i,:,0,t]   = TO_forc_mean[max_i+t:max_f+t,::].collapsed('t',iris.analysis.MEAN).data
+        hold[0,i,:,1,t]   = TO_forc_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
+        hold[1,i,:,0,t]   = TO_rem_mean[max_i+t:max_f+t,::].collapsed('t',iris.analysis.MEAN).data
+        hold[1,i,:,1,t]   = TO_rem_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
+        hold[2,i,:,0,t]   = TL_mean[max_i+t:max_f+t,::].collapsed('t',iris.analysis.MEAN).data
+        hold[2,i,:,1,t]   = TL_mean[min_i+t:min_f+t,::].collapsed('t',iris.analysis.MEAN).data
+        
+        plt.gca(projection='3d')
+        plt.plot(hold[1,i,:,0,t],y,pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
+#         plt.plot(hold[0,i,:,0,t],y,pressure,'-.',color=mc.jetloop(i,nlat),label="_nolegend_")
+        plt.plot(hold[2,i,:,0,t],y,pressure,linewidth=2,color=mc.jetloop(i,nlat),label=str(lat))
 
     i=i+1
-ext1 = plt.plot(0,0,'-',linewidth=1,color='k',label='Tland')
-ext2 = plt.plot(0,0,'--',linewidth=1,color='k',label='Tocean remote')
+# ext1 = plt.plot(0,0,'-',linewidth=1,color='k',label='Tland')
+# ext2 = plt.plot(0,0,'--',linewidth=1,color='k',label='Tocean remote')
 plt.xlim(-1.2,1.5)
-plt.ylabel('z [hPa]')
+# plt.zlabel('z [hPa]')
+plt.ylabel('lag [months]')
 plt.xlabel('Temp')
-plt.gca().invert_yaxis()
-plt.legend(loc=3)
+# plt.gca().invert_yaxis()
+# plt.legend(loc=3)
 # plt.legend((lat_range.astype('float')))
 
 # plt.plot(TOf_max.data,pressure,color='r')

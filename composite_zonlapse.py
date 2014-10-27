@@ -35,8 +35,8 @@ Tland = temp_plv.copy()
 Tocean.data = ma.array(Tocean.data, mask=seamask)
 Tland.data = ma.array(Tland.data, mask=landmask)
 # --------------
-mons = 1
-lag = 5
+mons = 6
+lag = 3
 max_i = 35 + lag
 max_f = max_i + mons
 min_i = 11 + lag
@@ -46,7 +46,7 @@ plt.clf()
 plt.ion()
 
 nlat = 5
-latmax = 40
+latmax = 30
 lat_range = np.linspace(0,latmax,nlat).astype('int')
 # hold(number of areas, number of lats, pressure levels, max/min)
 hold = np.zeros((3,nlat,temp_plv.coord('air_pressure').shape[0],2))
@@ -58,40 +58,60 @@ for lat  in xrange(0,latmax+1,10):
     SHlati = -lat-10
     SHlatf = -lat
 
-    Tocean_forc = Tocean.extract(iris.Constraint(latitude = lambda v: NHlati <= v <= NHlatf, longitude = lambda l: 140 <= l <= 300))
-    TO_forc_mean = Tocean_forc.collapsed(['latitude','longitude'],
-                    iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tocean_forc))
+    Tocean_forcNH = Tocean.extract(iris.Constraint(latitude = lambda v: NHlati <= v <= NHlatf, longitude = lambda l: 140 <= l <= 300))
+    TO_forc_meanNH = Tocean_forcNH.collapsed(['latitude','longitude'],
+                    iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tocean_forcNH))
 
-    Tocean_rem = Tocean.extract(iris.Constraint(latitude = lambda v: NHlati <= v <= NHlatf,
+    Tocean_remNH = Tocean.extract(iris.Constraint(latitude = lambda v: NHlati <= v <= NHlatf,
                     longitude = lambda l: (300 <= l <= 360) or (0 <= l <= 130)))
-    TO_rem_mean = Tocean_rem.collapsed(['latitude','longitude'],
-                    iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tocean_rem))
+    TO_rem_meanNH = Tocean_remNH.collapsed(['latitude','longitude'],
+                    iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tocean_remNH))
 
-    Tland_lat = Tland.extract(iris.Constraint(latitude = lambda v: NHlati <= v <= NHlatf))
-    TL_mean = Tland_lat.collapsed(['latitude','longitude'],
-                    iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tland_lat))
+    Tland_latNH = Tland.extract(iris.Constraint(latitude = lambda v: NHlati <= v <= NHlatf))
+    TL_meanNH = Tland_latNH.collapsed(['latitude','longitude'],
+                    iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tland_latNH))
+
+    Tocean_forcSH = Tocean.extract(iris.Constraint(latitude = lambda v: SHlati <= v <= SHlatf, longitude = lambda l: 140 <= l <= 300))
+    TO_forc_meanSH = Tocean_forcSH.collapsed(['latitude','longitude'],
+                    iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tocean_forcSH))
+
+    Tocean_remSH = Tocean.extract(iris.Constraint(latitude = lambda v: SHlati <= v <= SHlatf,
+                    longitude = lambda l: (300 <= l <= 360) or (0 <= l <= 130)))
+    TO_rem_meanSH = Tocean_remSH.collapsed(['latitude','longitude'],
+                    iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tocean_remSH))
+
+    Tland_latSH = Tland.extract(iris.Constraint(latitude = lambda v: SHlati <= v <= SHlatf))
+    TL_meanSH = Tland_latSH.collapsed(['latitude','longitude'],
+                    iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tland_latSH))
 
 
-    hold[0,i,:,0]   = TO_forc_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[0,i,:,1]   = TO_forc_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[1,i,:,0]   = TO_rem_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[1,i,:,1]   = TO_rem_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[2,i,:,0]   = TL_mean[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[2,i,:,1]   = TL_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
+    hold[0,i,:,0]   = TO_forc_meanNH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
+    hold[0,i,:,1]   = TO_forc_meanSH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
+#     hold[0,i,:,1]   = TO_forc_meanNH[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
+    hold[1,i,:,0]   = TO_rem_meanNH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
+    hold[1,i,:,1]   = TO_rem_meanSH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
+#     hold[1,i,:,1]   = TO_rem_meanNH[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
+    hold[2,i,:,0]   = TL_meanNH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
+    hold[2,i,:,1]   = TL_meanSH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
+#     hold[2,i,:,1]   = TL_meanNH[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
 
     plt.plot(hold[1,i,:,0],pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
-    plt.plot(hold[0,i,:,0],pressure,'-.',color=mc.jetloop(i,nlat),label="_nolegend_")
+    plt.plot(hold[1,i,:,1]+1,pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
+#     plt.plot(hold[0,i,:,0],pressure,'-.',color=mc.jetloop(i,nlat),label="_nolegend_")
+#     plt.plot(hold[0,i,:,1]+1,pressure,'-.',color=mc.jetloop(i,nlat),label="_nolegend_")
     plt.plot(hold[2,i,:,0],pressure,linewidth=2,color=mc.jetloop(i,nlat),label=str(lat))
+    plt.plot(hold[2,i,:,1]+1,pressure,linewidth=2,color=mc.jetloop(i,nlat),label=str(lat))
 
     i=i+1
 ext1 = plt.plot(0,0,'-',linewidth=1,color='k',label='Tland')
 ext2 = plt.plot(0,0,'--',linewidth=1,color='k',label='Tocean remote')
-plt.xlim(-1.2,1.5)
+plt.xlim(-1.2,2.5)
 plt.ylabel('z [hPa]')
 plt.xlabel('Temp')
 plt.gca().invert_yaxis()
 plt.legend(loc=3)
-# plt.legend((lat_range.astype('float')))
+plt.title('Temp profile, Tropical Ocean, Max/Min forcing') 
+plt.savefig('zonal_profiles.png')
 
 # plt.plot(TOf_max.data,pressure,color='r')
 # plt.plot(-TOf_min.data,pressure,'--',color='r',label="_nolegend_")
@@ -100,6 +120,4 @@ plt.legend(loc=3)
 # plt.plot(TL_max.data,pressure,color='g')
 # plt.plot(-TL_min.data,pressure,'--',color='g',label="_nolegend_")
 # plt.legend(('TO','TO_forcing','TO_remote','TL'),loc=0,title='Latitude')
-# plt.title('Temp profile, Tropical Ocean, Max/Min forcing') 
-# plt.savefig('zonal_profiles.png')
 
