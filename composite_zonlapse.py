@@ -36,7 +36,7 @@ Tocean.data = ma.array(Tocean.data, mask=seamask)
 Tland.data = ma.array(Tland.data, mask=landmask)
 # --------------
 mons = 6
-lag = 3
+lag = 0
 max_i = 35 + lag
 max_f = max_i + mons
 min_i = 11 + lag
@@ -45,17 +45,17 @@ min_f = min_i + mons
 plt.clf()
 plt.ion()
 
-nlat = 5
-latmax = 30
+nlat = 9
+latmax = 40
 lat_range = np.linspace(0,latmax,nlat).astype('int')
 # hold(number of areas, number of lats, pressure levels, max/min)
 hold = np.zeros((3,nlat,temp_plv.coord('air_pressure').shape[0],2))
 i=0
-for lat  in xrange(0,latmax+1,10):
+for lat  in xrange(0,latmax+1,5):
     print(lat)
     NHlati = lat
-    NHlatf = lat+10
-    SHlati = -lat-10
+    NHlatf = lat+5
+    SHlati = -lat-5
     SHlatf = -lat
 
     Tocean_forcNH = Tocean.extract(iris.Constraint(latitude = lambda v: NHlati <= v <= NHlatf, longitude = lambda l: 140 <= l <= 300))
@@ -95,23 +95,23 @@ for lat  in xrange(0,latmax+1,10):
     hold[2,i,:,1]   = TL_meanSH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
 #     hold[2,i,:,1]   = TL_meanNH[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
 
-    plt.plot(hold[1,i,:,0],pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
-    plt.plot(hold[1,i,:,1]+1,pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
+    plt.plot((hold[1,i,:,0]+hold[1,i,:,1])/2,pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
+#     plt.plot(hold[1,i,:,1]+1,pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
 #     plt.plot(hold[0,i,:,0],pressure,'-.',color=mc.jetloop(i,nlat),label="_nolegend_")
 #     plt.plot(hold[0,i,:,1]+1,pressure,'-.',color=mc.jetloop(i,nlat),label="_nolegend_")
-    plt.plot(hold[2,i,:,0],pressure,linewidth=2,color=mc.jetloop(i,nlat),label=str(lat))
-    plt.plot(hold[2,i,:,1]+1,pressure,linewidth=2,color=mc.jetloop(i,nlat),label=str(lat))
+    plt.plot((hold[2,i,:,0]+hold[2,i,:,1])/2,pressure,linewidth=2,color=mc.jetloop(i,nlat),label=str(lat))
+#     plt.plot(hold[2,i,:,1]+1,pressure,linewidth=2,color=mc.jetloop(i,nlat),label=str(lat))
 
     i=i+1
 ext1 = plt.plot(0,0,'-',linewidth=1,color='k',label='Tland')
 ext2 = plt.plot(0,0,'--',linewidth=1,color='k',label='Tocean remote')
-plt.xlim(-1.2,2.5)
+plt.xlim(-0.1,0.7)
 plt.ylabel('z [hPa]')
 plt.xlabel('Temp')
 plt.gca().invert_yaxis()
-plt.legend(loc=3)
-plt.title('Temp profile, Tropical Ocean, Max/Min forcing') 
-plt.savefig('zonal_profiles.png')
+plt.legend(loc=2)
+plt.title('Zonal Temp anom, Max forcing, '+str(lag)+' to '+str(lag+mons)+' months from peak forcing') 
+plt.savefig('./figures/zonal_prof.png')
 
 # plt.plot(TOf_max.data,pressure,color='r')
 # plt.plot(-TOf_min.data,pressure,'--',color='r',label="_nolegend_")

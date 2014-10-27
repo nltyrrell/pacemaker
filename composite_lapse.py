@@ -58,8 +58,8 @@ Tland_trop = Tland.extract(tropics)
 grid_areas_trop = iris.analysis.cartography.area_weights(Tland_trop)
 TL_trop_mean = Tland_trop.collapsed(['latitude','longitude'],
                 iris.analysis.MEAN,weights=grid_areas_trop)
-mons = 2
-lag = 3
+mons = 6
+lag = 0
 max_i = 35 + lag
 max_f = max_i + mons
 min_i = 11 + lag
@@ -76,19 +76,21 @@ TL_min  = TL_trop_mean[min_i:min_f,::].collapsed('t',iris.analysis.MEAN)
 plt.clf()
 plt.ion()
 plt.show()
-plt.plot(TO_max.data,pressure,color='b')
-plt.plot(-TO_min.data,pressure,'--',color='b',label="_nolegend_")
-plt.plot(TOf_max.data,pressure,color='r')
-plt.plot(-TOf_min.data,pressure,'--',color='r',label="_nolegend_")
-plt.plot(TOr_max.data,pressure,color='c')
-plt.plot(-TOr_min.data,pressure,'--',color='c',label="_nolegend_")
-plt.plot(TL_max.data,pressure,color='g')
-plt.plot(-TL_min.data,pressure,'--',color='g',label="_nolegend_")
-plt.legend(('TO','TO_forcing','TO_remote','TL'),loc=0,title='Latitude')
-plt.title('Temp profile, Tropical Ocean, Max/Min forcing') 
-plt.xlim(-0.2,1.1)
+# plt.plot(TO_max.data,pressure,color='b')
+# plt.plot(-TO_min.data,pressure,'--',color='b',label="_nolegend_")
+plt.plot(TOf_max.data,pressure,color='r',linewidth=1.8,label='Tocean forcing')
+plt.plot(-TOf_min.data,pressure,'--',color='r',linewidth=1.8,label="_nolegend_")
+plt.plot(TOr_max.data,pressure,color='c',linewidth=1.8,label='Tocean remote')
+plt.plot(-TOr_min.data,pressure,'--',color='c',label="_nolegend_",linewidth=1.8)
+plt.plot(TL_max.data,pressure,color='g',linewidth=1.8,label='Tland')
+plt.plot(-TL_min.data,pressure,'--',color='g',label="_nolegend_",linewidth=1.8)
+ext1 = plt.plot(0,0,'-',linewidth=1,color='k',label='Max')
+ext2 = plt.plot(0,0,'--',linewidth=1,color='k',label='Min')
+plt.legend(loc=0,title='Latitude')
+plt.title('Tropics, Max/Min forcing, '+str(lag)+' to '+str(lag+mons)+' months from peak forcing') 
+plt.xlim(-0.2,1.5)
 plt.ylabel('z [hPa]')
 plt.xlabel('Temp')
 plt.gca().invert_yaxis()
-plt.savefig('./figures/comp_zonal_profiles.png')
+plt.savefig('./figures/comp_trop_zonal_profiles_m'+str(lag)+str(lag+mons)+'.png')
 

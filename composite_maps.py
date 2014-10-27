@@ -59,13 +59,19 @@ T300max             = temp_300_maxT_mean
 temp_300_minT_mean  = temp_300[min_i:min_f,::].collapsed('t',iris.analysis.MEAN)
 T300min             = temp_300_minT_mean
 
+temp_850            = temp_plv.extract(iris.Constraint(air_pressure=850))
+temp_850_maxT_mean  = temp_850[max_i:max_f,::].collapsed('t',iris.analysis.MEAN)
+T850max             = temp_850_maxT_mean
+temp_850_minT_mean  = temp_850[min_i:min_f,::].collapsed('t',iris.analysis.MEAN)
+T850min             = temp_850_minT_mean
+
 plt.figure(1)
 qplt.pcmeshclf(Tmax,vmin=-1,vmax=1,cmap=mc.jetwhite())
 plt.title('T response to max positive forcing')
 plt.savefig('figures/comp_Tmax_sfc.png')
 
 plt.figure(2)
-qplt.pcmeshclf(Tmin,vmin=-1,vmax=1,cmap=mc.jetwhite())
+qplt.pcmeshclf(Tmin,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
 plt.title('T response to max negative forcing')
 plt.savefig('figures/comp_Tmin_sfc.png')
 
@@ -75,9 +81,19 @@ plt.title('T response to max positive forcing, 300hPa')
 plt.savefig('figures/comp_Tmax_300.png')
 
 plt.figure(4)
-qplt.pcmeshclf(T300min,vmin=-1,vmax=1,cmap=mc.jetwhite())
+qplt.pcmeshclf(T300min,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
 plt.title('T response to max negative forcing, 300hPa')
 plt.savefig('figures/comp_Tmin_300.png')
+
+plt.figure(5)
+qplt.pcmeshclf(T850max,vmin=-1,vmax=1,cmap=mc.jetwhite())
+plt.title('T response to max positive forcing, 850hPa')
+plt.savefig('figures/comp_Tmax_850.png')
+
+plt.figure(6)
+qplt.pcmeshclf(T850min,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
+plt.title('T response to max negative forcing, 850hPa')
+plt.savefig('figures/comp_Tmin_850.png')
 
 # plt.figure(3)
 # qplt.pcmeshclf(T300max - T300min,vmin=-1,vmax=1,cmap=mc.jetwhite())
