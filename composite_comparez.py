@@ -65,35 +65,37 @@ T700max             = temp_700_maxT_mean
 temp_700_minT_mean  = temp_700[min_i:min_f,::].collapsed('t',iris.analysis.MEAN)
 T700min             = temp_700_minT_mean
 
-plt.figure(1)
-qplt.pcmeshclf(Tmax,vmin=-1,vmax=1,cmap=mc.jetwhite())
+plt.close('all')
+plt.ion()
+# plt.figure(1)
+qplt.pcmeshclf(Tmax-T700max,vmin=-0.5,vmax=0.5,cmap=mc.jetwhite())
 plt.title('T response to max positive forcing')
-plt.savefig('figures/comp_Tmax_sfc.png')
+# plt.savefig('figures/comp_Tmax_sfc.png')
 
-plt.figure(2)
-qplt.pcmeshclf(Tmin,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
-plt.title('T response to min negative forcing')
-plt.savefig('figures/comp_Tmin_sfc.png')
-
-plt.figure(3)
-qplt.pcmeshclf(T300max,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max positive forcing, 300hPa')
-plt.savefig('figures/comp_Tmax_300.png')
-
-plt.figure(4)
-qplt.pcmeshclf(T300min,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
-plt.title('T response to min negative forcing, 300hPa')
-plt.savefig('figures/comp_Tmin_300.png')
-
-plt.figure(5)
-qplt.pcmeshclf(T700max,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max positive forcing, 700hPa')
-plt.savefig('figures/comp_Tmax_700.png')
-
-plt.figure(6)
-qplt.pcmeshclf(T700min,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
-plt.title('T response to min negative forcing, 700hPa')
-plt.savefig('figures/comp_Tmin_700.png')
+# plt.figure(2)
+# qplt.pcmeshclf(Tmin,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
+# plt.title('T response to max negative forcing')
+# plt.savefig('figures/comp_Tmin_sfc.png')
+# 
+# plt.figure(3)
+# qplt.pcmeshclf(T300max,vmin=-1,vmax=1,cmap=mc.jetwhite())
+# plt.title('T response to max positive forcing, 300hPa')
+# plt.savefig('figures/comp_Tmax_300.png')
+# 
+# plt.figure(4)
+# qplt.pcmeshclf(T300min,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
+# plt.title('T response to max negative forcing, 300hPa')
+# plt.savefig('figures/comp_Tmin_300.png')
+# 
+# plt.figure(5)
+# qplt.pcmeshclf(T850max,vmin=-1,vmax=1,cmap=mc.jetwhite())
+# plt.title('T response to max positive forcing, 850hPa')
+# plt.savefig('figures/comp_Tmax_850.png')
+# 
+# plt.figure(6)
+# qplt.pcmeshclf(T850min,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
+# plt.title('T response to max negative forcing, 850hPa')
+# plt.savefig('figures/comp_Tmin_850.png')
 
 # plt.figure(3)
 # qplt.pcmeshclf(T300max - T300min,vmin=-1,vmax=1,cmap=mc.jetwhite())
