@@ -50,9 +50,9 @@ def bc(aux_cube, dim_cube, comparable_coord):
     
     return new_cube
 
-def remove_seascyc(cube, time_name='t'):
-    iris.coord_categorisation.add_month_number(cube, 't', 'month_number')
-    cube_mean = cube[:,:,::].collapsed('t',iris.analysis.MEAN)
+def remove_seascyc(cube, time_name='time'):
+    iris.coord_categorisation.add_month_number(cube, 'time', 'month_number')
+    cube_mean = cube[:,:,::].collapsed('time',iris.analysis.MEAN)
     print "cube_mean"
     print cube_mean
     cube_anom = cube-cube_mean
@@ -75,20 +75,27 @@ def enscyc_ag(cube):
     m48 = cube.aggregated_by('48_months',iris.analysis.MEAN)
     return m48
     
-ncfile_path = '/home/nicholat/project/mit_tcm/access_runs/ncfiles/'
 
-temp = iris.load_cube(ncfile_path+'/temp.sfc.4ysl.nc')
-temp_rsc = remove_seascyc(temp) 
-temp_m48 = enscyc_ag(temp_rsc)
-temp_m48.long_name = temp.long_name
-iris.save(temp_m48,ncfile_path+'temp.m48.sfc.4ysl.nc')
+def composite_m48(cube_name, ncfile_path='/home/nicholat/project/pacemaker/ncfiles/'):
+    cube = iris.load_cube(ncfile_path+cube_name)
+    print('Loaded cube: '+cube_name)
+    try:
+        cube.coord('t').standard_name='time'
+    except:
+        pass
+    else:
+        print "t coord changed to time"
 
-temp_plv = iris.load_cube(ncfile_path+'/temp.plv.4ysl.nc')
-temp_plv_rsc = remove_seascyc(temp_plv) 
-temp_plv_m48 = enscyc_ag(temp_plv_rsc)
-temp_plv_m48.long_name = temp_plv.long_name
-iris.save(temp_plv_m48,ncfile_path+'temp.m48.plv.4ysl.nc')
+    cube_rsc = remove_seascyc(cube) 
+    cube_m48 = enscyc_ag(cube_rsc)
+    cube_m48.long_name = cube.long_name
+    new_name = cube_name[:-2]+'m48.nc'
+    iris.save(cube_m48,ncfile_path+new_name)
 
+composite_m48('lwflux.clsky.sfc.4ysl.nc')
+composite_m48('lhf.sfc.4ysl.nc')
+composite_m48('dlwr.sfc.4ysl.nc')
+composite_m48('dswr.sfc.4ysl.nc')
 
 # temp_plv_cube = temp_plv.copy()
 # temp_plv_cube.data = ma.array(phi_map[:,:,2], mask=landmask[0,0,::])
