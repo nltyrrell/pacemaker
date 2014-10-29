@@ -26,3 +26,24 @@ def theta(temp_cube,pres=False,pref=100000.):
     pot_temp = temp_data*(pref/pres)**(Rs_da/Cp_da)
 
     return pot_temp
+
+
+ncfile_path = '/home/nicholat/project/pacemaker/ncfiles/'
+temp_plv = iris.load_cube(ncfile_path + 'temp.m48.plv.4ysl.nc')
+temp_plv.coord('p').standard_name = 'air_pressure'
+
+theta_plv = theta(temp_plv)
+theta_cube = temp_plv.copy()
+
+theta_cube.data = theta_plv
+theta_cube.long_name = 'Theta'
+theta_cube.units = 'K'
+theta_cube.attributes['title'] = 'Theta'
+theta_cube.attributes['name'] = 'theta'
+# theta_cube.remove_coord('surface')
+# theta_cube.remove_coord('time')
+iris.save(theta_cube,ncfile_path+'theta.plv.4ysl.m48.nc')
+
+
+
+
