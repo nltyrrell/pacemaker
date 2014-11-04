@@ -5,7 +5,7 @@ import iris.plot as iplt
 import iris.quickplot as qplt
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-
+import sys
 
 
 
@@ -90,23 +90,21 @@ def composite_m48(cube_name, ncfile_path='/home/nicholat/project/pacemaker/ncfil
     cube_m48 = enscyc_ag(cube_rsc)
     cube_m48.long_name = cube.long_name
     new_name = cube_name[:-2]+'m48.nc'
+    print new_name
     iris.save(cube_m48,ncfile_path+new_name)
+    return cube_m48
 
+# u_cube = composite_m48('u.thlev.4ysl.fix.nc')
+gpht_cube = composite_m48('gpht.plv.4ysl.nc')
+
+sys.exit('all done')
+rh_cube = composite_m48('rhum.plv.4ysl.nc')
+p_cube = composite_m48('pres.sfc.4ysl.nc')
+v_cube = composite_m48('v.plev.4ysl.nc')
+u_cube = composite_m48('u.plev.4ysl.nc')
+w_cube = composite_m48('w.thlev.4ysl.fix.nc')
 composite_m48('lwflux.clsky.sfc.4ysl.nc')
 composite_m48('lhf.sfc.4ysl.nc')
 composite_m48('dlwr.sfc.4ysl.nc')
 composite_m48('dswr.sfc.4ysl.nc')
-
-# temp_plv_cube = temp_plv.copy()
-# temp_plv_cube.data = ma.array(phi_map[:,:,2], mask=landmask[0,0,::])
-# temp_plv_cube.long_name = 'Land Sea ratio std dev'
-# temp_plv_cube.units = 'no_unit'
-# temp_plv_cube.attributes['title'] = 'Land Sea ratio std dev'
-# temp_plv_cube.attributes['name'] = 'rstd'
-# temp_plv_cube.remove_coord('surface')
-# temp_plv_cube.remove_coord('t')
-# if (Trop_Only):
-#     iris.save(rs_cube,ncfile_path+'rs_trop.sfc.4ysl.nc')
-# else:
-#     iris.save(rs_cube,ncfile_path+'rs.sfc.4ysl.nc')
 

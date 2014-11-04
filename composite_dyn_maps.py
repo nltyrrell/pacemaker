@@ -16,30 +16,23 @@ import troposave as ta
 # Tsfc = alpha * Ttropo + epsilon
 
 ncfile_path = '/home/nicholat/project/pacemaker/ncfiles/'
-temp = iris.load_cube(ncfile_path + 'temp.m48.sfc.4ysl.nc')
-
-# import the ACCESS data using iris
-temp_plv = iris.load_cube(ncfile_path + 'temp.m48.plv.4ysl.nc')
-temp_plv.coord('p').standard_name = 'air_pressure'
+cld = iris.load_cube(ncfile_path + 'cld.thlev.4ysl.m48.nc')
+slp = iris.load_cube(ncfile_path + 'pres.sfc.4ysl.m48.nc')
+cld.coord('Hybrid height').standard_name = 'atmosphere_hybrid_height_coordinate'
 
 # Define regions
-temp_plv.coord('latitude').guess_bounds()
-temp_plv.coord('longitude').guess_bounds()
+cld.coord('latitude').guess_bounds()
+cld.coord('longitude').guess_bounds()
+slp.coord('latitude').guess_bounds()
+slp.coord('longitude').guess_bounds()
 
-# ---------- define sst/tland----------
-lsmask = iris.load_cube(ncfile_path + 'lsmask.nc')[0,0,::]
-landmask = ~(ma.make_mask(lsmask.data.copy()) + np.zeros(temp_plv.shape)).astype(bool) # mask sea, show land
-seamask = (ma.make_mask(lsmask.data.copy()) + np.zeros(temp_plv.shape)).astype(bool) # mask land, show sea
+high = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 5000 <= h <= 15000)
+low = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <= 5000)
+full = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <= 10000)
 
-# sys.exit('exiiiiiiitt')
-Tocean = temp_plv.copy()
-Tland = temp_plv.copy()
-Tocean.data = ma.array(Tocean.data, mask=seamask)
-Tland.data = ma.array(Tland.data, mask=landmask)
-# --------------
-tropics = iris.Constraint(latitude = lambda v: -30 <= v <= 30)
-Tocean_trop = Tocean.extract(tropics)
-grid_areas_trop = iris.analysis.cartography.area_weights(Tocean_trop)
+cld_high = cld.extract(high).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN).data
+cld_low = cld.extract(low).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN).data
+cld_full = cld.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN).data
 
 mons = 3
 lag = 3
@@ -48,56 +41,61 @@ max_f = max_i + mons
 min_i = 11 + lag
 min_f = min_i + mons
 
-temp_maxT_mean  = temp[max_i:max_f,0,::].collapsed('t',iris.analysis.MEAN)
-Tmax            = temp_maxT_mean
-temp_minT_mean  = temp[min_i:min_f,0,::].collapsed('t',iris.analysis.MEAN)
-Tmin            = temp_minT_mean
+slp_max = slp[max_i:max_f,0,::].collapsed('time',iris.analysis.MEAN)
+slp_min = slp[min_i:min_f,0,::].collapsed('time',iris.analysis.MEAN)
+cld_high_max = cld_high[max_i:max_f,::].mean(axis=0)
+cld_high_min = cld_high[min_i:min_f,::].mean(axis=0)
+cld_low_max = cld_low[max_i:max_f,::].mean(axis=0)
+cld_low_min = cld_low[min_i:min_f,::].mean(axis=0)
+cld_full_max = cld_full[max_i:max_f,::].mean(axis=0)
+cld_full_min = cld_full[min_i:min_f,::].mean(axis=0)
 
-temp_300            = temp_plv.extract(iris.Constraint(air_pressure=300))
-temp_300_maxT_mean  = temp_300[max_i:max_f,::].collapsed('t',iris.analysis.MEAN)
-T300max             = temp_300_maxT_mean
-temp_300_minT_mean  = temp_300[min_i:min_f,::].collapsed('t',iris.analysis.MEAN)
-T300min             = temp_300_minT_mean
+cld_high_max_cube = slp_max.copy()
+cld_high_min_cube = slp_max.copy()
+cld_low_max_cube = slp_max.copy()
+cld_low_min_cube = slp_max.copy()
+cld_full_max_cube = slp_max.copy()
+cld_full_min_cube = slp_max.copy()
 
-temp_700            = temp_plv.extract(iris.Constraint(air_pressure=700))
-temp_700_maxT_mean  = temp_700[max_i:max_f,::].collapsed('t',iris.analysis.MEAN)
-T700max             = temp_700_maxT_mean
-temp_700_minT_mean  = temp_700[min_i:min_f,::].collapsed('t',iris.analysis.MEAN)
-T700min             = temp_700_minT_mean
+cld_high_max_cube.data = cld_high_max
+cld_high_min_cube.data = cld_high_min
+cld_low_max_cube.data = cld_low_max
+cld_low_min_cube.data = cld_low_min
+cld_full_max_cube.data = cld_full_max
+cld_full_min_cube.data = cld_full_min
+
+plt.clf()
+plt.ion()
 
 plt.figure(1)
-qplt.pcmeshclf(Tmax,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max positive forcing')
-plt.savefig('figures/comp_Tmax_sfc.png')
+qplt.pcmeshclf(slp_max,vmin=-270,vmax=270,cmap=mc.jetwhite())
+plt.title('SLP response to max positive forcing')
+# plt.savefig('figures/comp_slpmax.png')
 
 plt.figure(2)
-qplt.pcmeshclf(Tmin,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
-plt.title('T response to min negative forcing')
-plt.savefig('figures/comp_Tmin_sfc.png')
+qplt.pcmeshclf(slp_min,vmin=-270,vmax=270,cmap=mc.jetwhite_r())
+plt.title('SLP response to min positive forcing')
+# plt.savefig('figures/comp_slpmin.png')
 
 plt.figure(3)
-qplt.pcmeshclf(T300max,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max positive forcing, 300hPa')
-plt.savefig('figures/comp_Tmax_300.png')
+qplt.pcmeshclf(cld_low_max_cube,vmin=-0.025,vmax=0.025,cmap=mc.jetwhite())
+plt.title('Low cloud response to max positive forcing')
+# plt.savefig('figures/comp_cld_lowmax.png')
 
 plt.figure(4)
-qplt.pcmeshclf(T300min,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
-plt.title('T response to min negative forcing, 300hPa')
-plt.savefig('figures/comp_Tmin_300.png')
+qplt.pcmeshclf(cld_low_min_cube,vmin=-0.025,vmax=0.025,cmap=mc.jetwhite_r())
+plt.title('Low cloud response to min positive forcing')
+# plt.savefig('figures/comp_cld_lowmin.png')
 
 plt.figure(5)
-qplt.pcmeshclf(T700max,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max positive forcing, 700hPa')
-plt.savefig('figures/comp_Tmax_700.png')
+qplt.pcmeshclf(cld_high_max_cube,vmin=-0.025,vmax=0.025,cmap=mc.jetwhite())
+plt.title('High cloud response to max positive forcing')
+# plt.savefig('figures/comp_cld_highmax.png')
 
 plt.figure(6)
-qplt.pcmeshclf(T700min,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
-plt.title('T response to min negative forcing, 700hPa')
-plt.savefig('figures/comp_Tmin_700.png')
-
-# plt.figure(3)
-# qplt.pcmeshclf(T300max - T300min,vmin=-1,vmax=1,cmap=mc.jetwhite())
-# plt.savefig('figures/reg_T_sfc_RH_sfc.png')
+qplt.pcmeshclf(cld_high_min_cube,vmin=-0.025,vmax=0.025,cmap=mc.jetwhite_r())
+plt.title('High cloud response to min positive forcing')
+# plt.savefig('figures/comp_cld_lowmin.png')
 
 
 

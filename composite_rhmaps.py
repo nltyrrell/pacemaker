@@ -16,11 +16,11 @@ import troposave as ta
 # Tsfc = alpha * Ttropo + epsilon
 
 ncfile_path = '/home/nicholat/project/pacemaker/ncfiles/'
-temp = iris.load_cube(ncfile_path + 'temp.m48.sfc.4ysl.nc')
+# temp = iris.load_cube(ncfile_path + 'rhum.m48.sfc.4ysl.nc')
 pres = iris.load_cube(ncfile_path + 'pres.sfc.4ysl.m48.nc')
 
 # import the ACCESS data using iris
-temp_plv = iris.load_cube(ncfile_path + 'temp.m48.plv.4ysl.nc')
+temp_plv = iris.load_cube(ncfile_path + 'rhum.plv.4ysl.m48.nc')
 temp_plv.coord('p').standard_name = 'air_pressure'
 
 # Define regions
@@ -51,67 +51,58 @@ max_f = max_i + mons
 min_i = 11 + lag
 min_f = min_i + mons
 
-temp_maxT_mean  = temp[max_i:max_f,0,::].collapsed('t',iris.analysis.MEAN)
-Tmax            = temp_maxT_mean
-temp_minT_mean  = temp[min_i:min_f,0,::].collapsed('t',iris.analysis.MEAN)
-Tmin            = temp_minT_mean
+# temp_maxT_mean  = temp[max_i:max_f,0,::].collapsed('t',iris.analysis.MEAN)
+# Tmax            = temp_maxT_mean
+# temp_minT_mean  = temp[min_i:min_f,0,::].collapsed('t',iris.analysis.MEAN)
+# Tmin            = temp_minT_mean
 
 temp_300            = temp_plv.extract(iris.Constraint(air_pressure=300))
-temp_300_maxT_mean  = temp_300[max_i:max_f,::].collapsed('t',iris.analysis.MEAN)
+temp_300_maxT_mean  = temp_300[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
 T300max             = temp_300_maxT_mean
-temp_300_minT_mean  = temp_300[min_i:min_f,::].collapsed('t',iris.analysis.MEAN)
+temp_300_minT_mean  = temp_300[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
 T300min             = temp_300_minT_mean
 
 temp_700            = temp_plv.extract(iris.Constraint(air_pressure=700))
-temp_700_maxT_mean  = temp_700[max_i:max_f,::].collapsed('t',iris.analysis.MEAN)
+temp_700_maxT_mean  = temp_700[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
 T700max             = temp_700_maxT_mean
-temp_700_minT_mean  = temp_700[min_i:min_f,::].collapsed('t',iris.analysis.MEAN)
+temp_700_minT_mean  = temp_700[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
 T700min             = temp_700_minT_mean
 
 Pmax  = pres[max_i:max_f,0,::].collapsed('time',iris.analysis.MEAN)
 Pmin  = pres[min_i:min_f,0,::].collapsed('time',iris.analysis.MEAN)
 
-pmm = 200
-plt.figure(1)
-qplt.pcmeshclf(Pmax,vmin=-pmm,vmax=pmm,cmap=mc.jetwhite())
-plt.title('Sfc pres response to max positive forcing')
-plt.savefig('figures/comp_Pmax_sfc.png')
 
-plt.figure(2)
-qplt.pcmeshclf(Pmin,vmin=-pmm,vmax=pmm,cmap=mc.jetwhite_r())
-plt.title('Sfc Pres response to min negative forcing')
-plt.savefig('figures/comp_Pmin_sfc.png')
-
-sys.exit('exit')
-plt.figure(1)
-qplt.pcmeshclf(Tmax,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max positive forcing')
-plt.savefig('figures/comp_Tmax_sfc.png')
-
-plt.figure(2)
-qplt.pcmeshclf(Tmin,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
-plt.title('T response to min negative forcing')
-plt.savefig('figures/comp_Tmin_sfc.png')
-
+# sys.exit('exit')
+# plt.figure(1)
+# qplt.pcmeshclf(Tmax,vmin=-1,vmax=1,cmap=mc.jetwhite())
+# plt.title('T response to max positive forcing')
+# plt.savefig('figures/comp_Tmax_sfc.png')
+# 
+# plt.figure(2)
+# qplt.pcmeshclf(Tmin,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
+# plt.title('T response to min negative forcing')
+# plt.savefig('figures/comp_Tmin_sfc.png')
+# 
+rhmm = 5
 plt.figure(3)
-qplt.pcmeshclf(T300max,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max positive forcing, 300hPa')
-plt.savefig('figures/comp_Tmax_300.png')
+qplt.pcmeshclf(T300max,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite())
+plt.title('RH response to max positive forcing, 300hPa')
+plt.savefig('figures/comp_RHmax_300.png')
 
 plt.figure(4)
-qplt.pcmeshclf(T300min,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
-plt.title('T response to min negative forcing, 300hPa')
-plt.savefig('figures/comp_Tmin_300.png')
+qplt.pcmeshclf(T300min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
+plt.title('RH response to min negative forcing, 300hPa')
+plt.savefig('figures/comp_RHmin_300.png')
 
 plt.figure(5)
-qplt.pcmeshclf(T700max,vmin=-1,vmax=1,cmap=mc.jetwhite())
-plt.title('T response to max positive forcing, 700hPa')
-plt.savefig('figures/comp_Tmax_700.png')
+qplt.pcmeshclf(T700max,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite())
+plt.title('RH response to max positive forcing, 700hPa')
+plt.savefig('figures/comp_RHmax_700.png')
 
 plt.figure(6)
-qplt.pcmeshclf(T700min,vmin=-1,vmax=1,cmap=mc.jetwhite_r())
-plt.title('T response to min negative forcing, 700hPa')
-plt.savefig('figures/comp_Tmin_700.png')
+qplt.pcmeshclf(T700min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
+plt.title('RH response to min negative forcing, 700hPa')
+plt.savefig('figures/comp_RHmin_700.png')
 
 # plt.figure(3)
 # qplt.pcmeshclf(T300max - T300min,vmin=-1,vmax=1,cmap=mc.jetwhite())
