@@ -42,7 +42,45 @@ theta_cube.attributes['title'] = 'Theta'
 theta_cube.attributes['name'] = 'theta'
 # theta_cube.remove_coord('surface')
 # theta_cube.remove_coord('time')
-iris.save(theta_cube,ncfile_path+'theta.plv.4ysl.m48.nc')
+# iris.save(theta_cube,ncfile_path+'theta.plv.4ysl.m48.nc')
+sys.exit('exitttt')
+def theta(temp_cube,RH_cube,pres=False,pref=100000.):
+    """ Calculate the Virtual Potential Temperature
+    theta_v = theta * (1 + 0.61*r - r_L)
+    Cloudy/sat air use r = r_s
+    Unsat air use r_L = 0
+    to find r
+    r = r_s*RH/100
+    r_s = 6.112*exp(22.46*tempC/(tempC+272.62))*100.
+
+    Input:
+    temp_cube [K]
+    Output: Theta [K]
+    """
+    pres = temp_cube.coord('air_pressure').points
+    temp_data = temp_cube.data
+    new_pres = np.ones(temp_data.shape)
+    pres = np.expand_dims(np.expand_dims(pres,axis=1),axis=1) 
+    new_pres = pres*new_pres
+
+    theta = temp_data*(pref/pres)**(Rs_da/Cp_da)
+
+    tempC = temp_data - 273.15
+
+    r_s = 6.112*exp(22.46*tempC/(tempC+272.62))*100.
+
+    theta_v = theta * (1 + 0.61*r - r_L)
+
+    return theta, theta_v
+
+
+
+
+
+
+
+
+
 
 
 

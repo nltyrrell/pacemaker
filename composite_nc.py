@@ -53,6 +53,8 @@ def bc(aux_cube, dim_cube, comparable_coord):
 def remove_seascyc(cube, time_name='time'):
     iris.coord_categorisation.add_month_number(cube, 'time', 'month_number')
     cube_mean = cube[:,:,::].collapsed('time',iris.analysis.MEAN)
+    print "cube"
+    print cube
     print "cube_mean"
     print cube_mean
     cube_anom = cube-cube_mean
@@ -68,7 +70,10 @@ def remove_seascyc(cube, time_name='time'):
 def enscyc_ag(cube):
     ens = np.tile(np.linspace(1,48,48),24)
     #trim cube
+    print cube.shape
     cube = cube[0:ens.shape[0]]
+    print cube.shape
+    print cube
     cube.coord('month_number').long_name = '48_months'
     cube.coord('48_months').points = ens
 
@@ -76,7 +81,7 @@ def enscyc_ag(cube):
     return m48
     
 
-def composite_m48(cube_name, ncfile_path='/home/nicholat/project/pacemaker/ncfiles/'):
+def composite_m48(cube_name, ncfile_path='/home/nicholat/project/pacemaker/ncfiles/',notanom=False):
     cube = iris.load_cube(ncfile_path+cube_name)
     print('Loaded cube: '+cube_name)
     try:
@@ -86,18 +91,27 @@ def composite_m48(cube_name, ncfile_path='/home/nicholat/project/pacemaker/ncfil
     else:
         print "t coord changed to time"
 
-    cube_rsc = remove_seascyc(cube) 
+    if notanom:
+        cube_rsc = cube
+        iris.coord_categorisation.add_month_number(cube_rsc, 'time', 'month_number')
+    else:
+        cube_rsc = remove_seascyc(cube) 
     cube_m48 = enscyc_ag(cube_rsc)
     cube_m48.long_name = cube.long_name
-    new_name = cube_name[:-2]+'m48.nc'
+    if notanom:
+        new_name = cube_name[:-2]+'m48.abs.nc'
+    else:
+        new_name = cube_name[:-2]+'m48.nc'
     print new_name
     iris.save(cube_m48,ncfile_path+new_name)
-    return cube_m48
+    return cube_m48, cube_rsc, cube
 
 # u_cube = composite_m48('u.thlev.4ysl.fix.nc')
-gpht_cube = composite_m48('gpht.plv.4ysl.nc')
+rhum_cube, rhum_rsc, cube = composite_m48('rhum.plv.4ysl.nc',notanom=True)
 
 sys.exit('all done')
+temp_cube, temp_rsc, cube = composite_m48('temp.plv.4ysl.nc',notanom=True)
+gpht_cube = composite_m48('gpht.plv.4ysl.nc')
 rh_cube = composite_m48('rhum.plv.4ysl.nc')
 p_cube = composite_m48('pres.sfc.4ysl.nc')
 v_cube = composite_m48('v.plev.4ysl.nc')
