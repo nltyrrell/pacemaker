@@ -19,6 +19,7 @@ temp_plv = iris.load_cube(ncfile_path + 'theta.plv.4ysl.m48.nc')
 # temp_plv.coord('p').standard_name = 'air_pressure'
 
 pressure = temp_plv.coord('air_pressure').points
+time_coord = 't'
 
 # Define regions
 temp_plv.coord('latitude').guess_bounds()
@@ -35,8 +36,8 @@ Tland = temp_plv.copy()
 Tocean.data = ma.array(Tocean.data, mask=seamask)
 Tland.data = ma.array(Tland.data, mask=landmask)
 # --------------
-mons = 6
-lag = 0
+mons = 3
+lag = 2
 max_i = 35 + lag
 max_f = max_i + mons
 min_i = 11 + lag
@@ -85,15 +86,15 @@ for lat  in xrange(0,latmax+1,5):
                     iris.analysis.MEAN,weights=iris.analysis.cartography.area_weights(Tland_latSH))
 
 
-    hold[0,i,:,0]   = TO_forc_meanNH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[0,i,:,1]   = TO_forc_meanSH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-#     hold[0,i,:,1]   = TO_forc_meanNH[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[1,i,:,0]   = TO_rem_meanNH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[1,i,:,1]   = TO_rem_meanSH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-#     hold[1,i,:,1]   = TO_rem_meanNH[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[2,i,:,0]   = TL_meanNH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-    hold[2,i,:,1]   = TL_meanSH[max_i:max_f,::].collapsed('t',iris.analysis.MEAN).data
-#     hold[2,i,:,1]   = TL_meanNH[min_i:min_f,::].collapsed('t',iris.analysis.MEAN).data
+    hold[0,i,:,0]   = TO_forc_meanNH[max_i:max_f,::].collapsed(time_coord,iris.analysis.MEAN).data
+    hold[0,i,:,1]   = TO_forc_meanSH[max_i:max_f,::].collapsed(time_coord,iris.analysis.MEAN).data
+#     hold[0,i,:,1]   = TO_forc_meanNH[min_i:min_f,::].collapsed(time_coord,iris.analysis.MEAN).data
+    hold[1,i,:,0]   = TO_rem_meanNH[max_i:max_f,::].collapsed(time_coord,iris.analysis.MEAN).data
+    hold[1,i,:,1]   = TO_rem_meanSH[max_i:max_f,::].collapsed(time_coord,iris.analysis.MEAN).data
+#     hold[1,i,:,1]   = TO_rem_meanNH[min_i:min_f,::].collapsed(time_coord,iris.analysis.MEAN).data
+    hold[2,i,:,0]   = TL_meanNH[max_i:max_f,::].collapsed(time_coord,iris.analysis.MEAN).data
+    hold[2,i,:,1]   = TL_meanSH[max_i:max_f,::].collapsed(time_coord,iris.analysis.MEAN).data
+#     hold[2,i,:,1]   = TL_meanNH[min_i:min_f,::].collapsed(time_coord,iris.analysis.MEAN).data
 
     plt.plot((hold[1,i,:,0]+hold[1,i,:,1])/2,pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
 #     plt.plot(hold[1,i,:,1]+1,pressure,'--',linewidth=2,color=mc.jetloop(i,nlat))
@@ -105,14 +106,14 @@ for lat  in xrange(0,latmax+1,5):
     i=i+1
 ext1 = plt.plot(0,0,'-',linewidth=1,color='k',label='Tland')
 ext2 = plt.plot(0,0,'--',linewidth=1,color='k',label='Tocean remote')
-plt.ylim(500,1000)
-plt.xlim(-0.0,1.8)
+plt.ylim(000,1000)
+plt.xlim(-2.0,2.0)
 plt.ylabel('z [hPa]')
 plt.xlabel('Temp')
 plt.gca().invert_yaxis()
-# plt.legend(loc=3)
+plt.legend(loc=3)
 plt.title('Zonal Theta anom, Max forcing, '+str(lag)+' to '+str(lag+mons)+' months from peak forcing') 
-plt.savefig('./figures/theta_zonal_prof_zoom.png')
+# plt.savefig('./figures/theta_zonal_prof_zoom.png')
 
 # plt.plot(TOf_max.data,pressure,color='r')
 # plt.plot(-TOf_min.data,pressure,'--',color='r',label="_nolegend_")

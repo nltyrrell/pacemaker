@@ -111,6 +111,7 @@ T300min             = temp_300_minT_mean
 # plt.savefig('figures/comp_Tmin_sfc.png')
 # 
 thmm = 2
+thvmm = 2
 plt.close('all')
 
 plt.figure(1)
@@ -118,9 +119,9 @@ qplt.pcmeshclf(Th300max,vmin=-thmm,vmax=thmm,cmap=mc.jetwhite())
 plt.title('Theta response to max positive forcing, 300hPa')
 # plt.savefig('figures/comp_theta_max_300.png')
 
-plt.figure(2)
-qplt.pcmeshclf(Th300min,vmin=-thmm,vmax=thmm,cmap=mc.jetwhite_r())
-plt.title('Theta response to min negative forcing, 300hPa')
+# plt.figure(2)
+# qplt.pcmeshclf(Th300min,vmin=-thmm,vmax=thmm,cmap=mc.jetwhite_r())
+# plt.title('Theta response to min negative forcing, 300hPa')
 # plt.savefig('figures/comp_theta_min_300.png')
 
 plt.figure(3)
@@ -128,29 +129,29 @@ qplt.pcmeshclf(Th700max,vmin=-thmm,vmax=thmm,cmap=mc.jetwhite())
 plt.title('Theta response to max positive forcing, 700hPa')
 # plt.savefig('figures/comp_theta_max_700.png')
 
-plt.figure(4)
-qplt.pcmeshclf(Th700min,vmin=-thmm,vmax=thmm,cmap=mc.jetwhite_r())
-plt.title('Theta response to min negative forcing, 700hPa')
+# plt.figure(4)
+# qplt.pcmeshclf(Th700min,vmin=-thmm,vmax=thmm,cmap=mc.jetwhite_r())
+# plt.title('Theta response to min negative forcing, 700hPa')
 # plt.savefig('figures/comp_theta_min_700.png')
 
 plt.figure(5)
-qplt.pcmeshclf(Thv300max,vmin=-thmm,vmax=thmm,cmap=mc.jetwhite())
+qplt.pcmeshclf(Thv300max,vmin=-thvmm,vmax=thvmm,cmap=mc.jetwhite())
 plt.title('Theta v response to max positive forcing, 300hPa')
 # plt.savefig('figures/comp_theta_max_300.png')
 
-plt.figure(6)
-qplt.pcmeshclf(Thv300min,vmin=-thmm,vmax=thmm,cmap=mc.jetwhite_r())
-plt.title('Theta v response to min negative forcing, 300hPa')
+# plt.figure(6)
+# qplt.pcmeshclf(Thv300min,vmin=-thvmm,vmax=thvmm,cmap=mc.jetwhite_r())
+# plt.title('Theta v response to min negative forcing, 300hPa')
 # plt.savefig('figures/comp_theta_min_300.png')
 
 plt.figure(7)
-qplt.pcmeshclf(Thv700max,vmin=-thmm,vmax=thmm,cmap=mc.jetwhite())
+qplt.pcmeshclf(Thv700max,vmin=-thvmm,vmax=thvmm,cmap=mc.jetwhite())
 plt.title('Theta v response to max positive forcing, 700hPa')
 # plt.savefig('figures/comp_theta_max_700.png')
 
-plt.figure(8)
-qplt.pcmeshclf(Thv700min,vmin=-thmm,vmax=thmm,cmap=mc.jetwhite_r())
-plt.title('Theta v response to min negative forcing, 700hPa')
+# plt.figure(8)
+# qplt.pcmeshclf(Thv700min,vmin=-thvmm,vmax=thvmm,cmap=mc.jetwhite_r())
+# plt.title('Theta v response to min negative forcing, 700hPa')
 # plt.savefig('figures/comp_theta_min_700.png')
 
 # plt.figure(3)

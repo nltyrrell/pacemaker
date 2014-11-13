@@ -45,9 +45,10 @@ def theta(temp_cube,RH_cube,tempC_cube,pres=False,pref=1000.):
     e_s_liq = e_s_liq_mask.data*~e_s_liq_mask.mask
     e_s = e_s_liq + e_s_ice 
 
-    # Calc Sat MixRatio r_s
+    # Calc Sat MixRatio r_s[kg/kg]
     r_s = 0.622*(e_s/(pres_hPa-e_s))
 
+    # Calculate mix ratio [kg/kg]
     r = r_s*RH_data/100
 
     theta_v = theta * (1 + 0.61*r - r_L)
@@ -77,7 +78,9 @@ theta_cube.attributes['title'] = 'Theta'
 theta_cube.attributes['name'] = 'theta'
 # theta_cube.remove_coord('surface')
 # theta_cube.remove_coord('time')
-iris.save(theta_cube,ncfile_path+'theta.plv.4ysl.m48.nc')
+theta_mean = theta_cube.collapsed('time',iris.analysis.MEAN)
+theta_anom = theta_cube - theta_mean
+iris.save(theta_anom,ncfile_path+'theta.plv.4ysl.m48.nc')
 
 thetav_cube.data = theta_v
 thetav_cube.standard_name = 'virtual_temperature'
@@ -86,7 +89,9 @@ thetav_cube.attributes['title'] = 'ThetaV'
 thetav_cube.attributes['name'] = 'thetav'
 # thetav_cube.remove_coord('surface')
 # thetav_cube.remove_coord('time')
-iris.save(thetav_cube,ncfile_path+'thetav.plv.4ysl.m48.nc')
+thetav_mean = thetav_cube.collapsed('time',iris.analysis.MEAN)
+thetav_anom = thetav_cube - theta_mean
+iris.save(thetav_anom,ncfile_path+'thetav.plv.4ysl.m48.nc')
 
 
 

@@ -45,6 +45,7 @@ lsmask.coord('longitude').guess_bounds()
 # seamask = (ma.make_mask(lsmask.data.copy()) + np.zeros(temp_plv.shape)).astype(bool) # mask land, show sea
 uv = VectorWind(u,v)
 uv_div = uv.divergence()
+psi = uv.streamfunction()
 
 plev_b = 300
 plev_t = 850
@@ -54,15 +55,15 @@ uv_midtrop_max = ta.iristropave(uv_div,plev_bottom=850,plev_top=500)[max_i:max_f
 uv_lowtrop_max = ta.iristropave(uv_div,plev_bottom=1000,plev_top=850)[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
 
 vmm = 5e-7
-qplt.pcmeshclf(uv_uptrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
-plt.title('Divergent wind, 500-200hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
-plt.savefig('./figures/divwind_uptrop_max.png')
-qplt.pcmeshclf(uv_midtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
-plt.title('Divergent wind, 850-500hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
-plt.savefig('./figures/divwind_midtrop_max.png')
-qplt.pcmeshclf(uv_lowtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
-plt.title('Divergent wind, 1000-850hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
-plt.savefig('./figures/divwind_lowtrop_max.png')
+# qplt.pcmeshclf(uv_uptrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+# plt.title('Divergent wind, 500-200hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+# plt.savefig('./figures/divwind_uptrop_max.png')
+# qplt.pcmeshclf(uv_midtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+# plt.title('Divergent wind, 850-500hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+# plt.savefig('./figures/divwind_midtrop_max.png')
+# qplt.pcmeshclf(uv_lowtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+# plt.title('Divergent wind, 1000-850hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+# plt.savefig('./figures/divwind_lowtrop_max.png')
 
 sys.exit('exit')
 

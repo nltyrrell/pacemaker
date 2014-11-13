@@ -42,7 +42,7 @@ theta_cube.attributes['title'] = 'Theta'
 theta_cube.attributes['name'] = 'theta'
 # theta_cube.remove_coord('surface')
 # theta_cube.remove_coord('time')
-# iris.save(theta_cube,ncfile_path+'theta.plv.4ysl.m48.nc')
+iris.save(theta_cube,ncfile_path+'theta.plv.4ysl.m48.nc')
 sys.exit('exitttt')
 def theta(temp_cube,RH_cube,pres=False,pref=100000.):
     """ Calculate the Virtual Potential Temperature
