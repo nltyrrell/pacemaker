@@ -81,8 +81,8 @@ def enscyc_ag(cube):
     return m48
     
 
-def composite_m48(cube_name, ncfile_path='/home/nicholat/project/pacemaker/ncfiles/',notanom=False):
-    cube = iris.load_cube(ncfile_path+cube_name)
+def composite_m48(cube_name, ncfile_path_in='/home/nicholat/project/pacemaker/ncfiles/', ncfile_path_out='/home/nicholat/project/pacemaker/ncfiles/',notanom=False):
+    cube = iris.load_cube(ncfile_path_in+cube_name)
     print('Loaded cube: '+cube_name)
     try:
         cube.coord('t').standard_name='time'
@@ -103,13 +103,18 @@ def composite_m48(cube_name, ncfile_path='/home/nicholat/project/pacemaker/ncfil
     else:
         new_name = cube_name[:-2]+'m48.nc'
     print new_name
-    iris.save(cube_m48,ncfile_path+new_name)
+    iris.save(cube_m48,ncfile_path_out+new_name)
     return cube_m48, cube_rsc, cube
 
 # u_cube = composite_m48('u.thlev.4ysl.fix.nc')
-precip = composite_m48('w.thlev.4ysl.fix.nc')
+smc = composite_m48('smc.sfc.4ysl.nc')
 
 sys.exit('all done')
+dswr = composite_m48('dswr.sfc.4ysl.nc', ncfile_path_in='/home/nicholat/project/access/slabosc/ncfiles/')
+dlwr = composite_m48('dlwr.sfc.4ysl.nc', ncfile_path_in='/home/nicholat/project/access/slabosc/ncfiles/')
+rain_conv = composite_m48('rain.conv.4ysl.nc')
+rain_lgscl = composite_m48('rain.lgscale.4ysl.nc')
+precip = composite_m48('precip.4ysl.nc')
 smc_cube, smc_rsc, cube = composite_m48('smc.plv.4ysl.nc',notanom=True)
 rhum_cube, rhum_rsc, cube = composite_m48('rhum.plv.4ysl.nc',notanom=True)
 temp_cube, temp_rsc, cube = composite_m48('temp.plv.4ysl.nc',notanom=True)
