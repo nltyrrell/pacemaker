@@ -1,0 +1,68 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{epstopdf}
+
+\graphicspath{{./figures/}{../plot_twod/figures/}}
+
+\newcommand{\epsfig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.eps}}
+\newcommand{\pngfig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.png}}
+
+
+
+\begin{document}
+\section{}
+\subsection{Define regions}
+\pngfig[0.7]{index_Tmax_700}
+\begin{enumerate}
+	\item Deep wet tropics
+	\item Dry subtropics
+	\item Maritime tropics
+	\item Monsoonal tropics
+	\item Dry sub/extra-tropics
+	\end{enumerate}
+
+\subsection{Surface, Troposphere}
+\pngfig[0.5]{comp_Tmax_sfc}
+\pngfig[0.5]{comp_RHmax_1000}
+\pngfig[0.5]{comp_Tmax_700}
+\pngfig[0.5]{comp_RHmax_700}
+\pngfig[0.5]{comp_Tmax_300}
+\pngfig[0.5]{comp_RHmax_300}
+
+\subsection{Lapse rate response}
+\pngfig[0.5]{regprof_TO_Zon_NH}
+\pngfig[0.5]{comp_trop_zonal_profiles_m06}
+% \pngfig[0.5]{comp_trop_zonal_profiles_m26}
+
+\pngfig[0.5]{zonal_prof_land}
+\pngfig[0.5]{zonal_prof_ocean}
+\pngfig[0.5]{zonal_prof}
+
+\pngfig[0.5]{theta_zonal_prof_land}
+\pngfig[0.5]{theta_zonal_prof_ocean}
+\pngfig[0.5]{theta_zonal_prof}
+\pngfig[0.5]{theta_zonal_prof_zoom}
+
+
+\pngfig[0.5]{cont_maxtemp_profile}
+
+\subsection{Lapse rate lag response}
+
+\pngfig[0.5]{3d_lag_lat15_30_v1}
+\pngfig[0.5]{3d_lag_lat15_30_v2}
+
+\pagebreak
+
+\subsection{RH response}
+\pngfig[0.5]{comp_RHmax_1000}
+\pngfig[0.5]{comp_RHmin_1000}
+\pngfig[0.5]{comp_RHmax_700}
+\pngfig[0.5]{comp_RHmin_700}
+\pngfig[0.5]{comp_RHmax_300}
+\pngfig[0.5]{comp_RHmin_300}
+
+
+\end{document}
+

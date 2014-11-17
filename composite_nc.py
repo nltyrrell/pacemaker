@@ -107,9 +107,11 @@ def composite_m48(cube_name, ncfile_path='/home/nicholat/project/pacemaker/ncfil
     return cube_m48, cube_rsc, cube
 
 # u_cube = composite_m48('u.thlev.4ysl.fix.nc')
-rhum_cube, rhum_rsc, cube = composite_m48('rhum.plv.4ysl.nc',notanom=True)
+precip = composite_m48('w.thlev.4ysl.fix.nc')
 
 sys.exit('all done')
+smc_cube, smc_rsc, cube = composite_m48('smc.plv.4ysl.nc',notanom=True)
+rhum_cube, rhum_rsc, cube = composite_m48('rhum.plv.4ysl.nc',notanom=True)
 temp_cube, temp_rsc, cube = composite_m48('temp.plv.4ysl.nc',notanom=True)
 gpht_cube = composite_m48('gpht.plv.4ysl.nc')
 rh_cube = composite_m48('rhum.plv.4ysl.nc')
