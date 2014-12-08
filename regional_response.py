@@ -10,6 +10,7 @@ import scipy.stats as stats
 import sys
 import troposave as ta
 import prettyplotlib as ppl
+import pickle
 
 """
 Define many regions, based on surface temperature response (or moisture?)
@@ -63,9 +64,17 @@ def regions(cube,clim=False):
     NthWestAfr, NthWestAfr_mean = regmean(land_cube,loni=-15,lonf=15,lati=10,latf=30)
     NthEastAfr, NthEastAfr_mean = regmean(land_cube,loni=15,lonf=50,lati=10,latf=30)
     TropAfr, TropAfr_mean = regmean(land_cube,loni=12,lonf=40,lati=-15,latf=5)
+    SthAfr, SthAfr_mean = regmean(land_cube,loni=12,lonf=40,lati=-35,latf=-15)
     Aus, Aus_mean = regmean(land_cube,loni=120,lonf=140,lati=-30,latf=-17)
 
-    return [India_mean , MC_mean , TropSthAm_mean , SthSthAm_mean , NthWestAfr_mean , NthEastAfr_mean , TropAfr_mean , Aus_mean]
+    lat10, lat10_mean = regmean(land_cube,loni=0,lonf=360,lati=-10,latf=10)
+    latp20, latp20_mean = regmean(land_cube,loni=0,lonf=360,lati=10,latf=20)
+    latm20, latm20_mean = regmean(land_cube,loni=0,lonf=360,lati=-20,latf=-10)
+    latp30, latp30_mean = regmean(land_cube,loni=0,lonf=360,lati=20,latf=30)
+    latm30, latm30_mean = regmean(land_cube,loni=0,lonf=360,lati=-30,latf=-20)
+#     lat20mean = latp20
+
+    return [India_mean , MC_mean , TropSthAm_mean , SthSthAm_mean , NthWestAfr_mean , NthEastAfr_mean, TropAfr_mean, SthAfr_mean, Aus_mean, lat10_mean, latp20_mean, latm20_mean, latp30_mean, latm30_mean]
     
 ncfile_path = '/home/nicholat/project/pacemaker/ncfiles/'
 
@@ -144,16 +153,19 @@ for n in xrange(np.shape(temp_reg)[0]):
     regarr[9,n] = cld_high_reg[n].data
     regarr[10,n] = cld_low_reg[n].data
     regarr[11,n] = precip_reg[n].data[0]
-    regarr[12,n] = u_high_reg[n].data
-    regarr[13,n] = u_low_reg[n].data
-    regarr[14,n] = v_high_reg[n].data
-    regarr[15,n] = v_low_reg[n].data
+#     regarr[12,n] = u_high_reg[n].data
+#     regarr[13,n] = u_low_reg[n].data
+#     regarr[14,n] = v_high_reg[n].data
+#     regarr[15,n] = v_low_reg[n].data
+
+with open('./pickles/regarr.pickle','wb') as f:
+	pickle.dump(regarr,f)
 
 for n in xrange(regarr.shape[0]):
     regarr[n,:] = regarr[n,:]/(regarr[n,:].std())
 
 var = np.array(['Tsfc','smc clim','T700hPa','T300hpa','RH700hPa','RH300hPa','DLWR','DSWR','smc','Cld High','Cld Low','Precip','u_high','u_low','v_high','v_low'])
-regs =np.array(['India_mean','MC_mean','TropSthAm_mean','SthSthAm_mean','NthWestAfr_mean','NthEastAfr_mean','TropAfr_mean','Aus_mean'])
+regs =np.array(['India','MC','TropSthAm','SthSthAm','NthWestAfr','NthEastAfr','TropAfr','SthAfr','Aus','lat10', 'latN20', 'latS20', 'latN30', 'latS30'])
 
 plt.close('all')
 fig, axes = plt.subplots(nrows=1) #,ncols=2)
@@ -164,6 +176,8 @@ axes.set_xlabel('Regions')
 axes.set_ylabel('variables')
 axes.set_title('Response to Max forcing')
 plt.show()
+fig.set_size_inches(15,5)
+plt.savefig('regional_response_manyvar.eps')
 
 
 
