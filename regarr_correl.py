@@ -35,6 +35,6 @@ axes.set_xlabel('Regions')
 axes.set_ylabel('Regions')
 axes.set_title('Correlation between regions for range of variables')
 plt.show()
-fig.set_size_inches(15,5)
+fig.set_size_inches(18,5)
 plt.savefig('regresp_cor_manyvar.eps')
 

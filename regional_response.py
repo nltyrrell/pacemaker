@@ -34,11 +34,25 @@ def regmean(cube,loni,lonf,lati,latf):
     return cube_reg, cube_regmean
 
 
-def regions(cube,clim=False):
+def regions(cube,clim=False,maxf=True):
+    mons = 4
+    lag = 1
+    max_i = 35 + lag
+    max_f = max_i + mons
+    min_i = 11 + lag
+    min_f = min_i + mons
+    if maxf:
+        forc_i = max_i
+        forc_f = max_f
+    else:
+        forc_i = min_i
+        forc_f = min_f
+
+
     if clim:
         cube_max = cube.collapsed('time',iris.analysis.MEAN)
     else:
-        cube_max = cube[35:42,:,::].collapsed('time',iris.analysis.MEAN)
+        cube_max = cube[forc_i:forc_f,:,::].collapsed('time',iris.analysis.MEAN)
     # cube_anom = cube-cube_mean
 
     cube_max.coord('latitude').guess_bounds()
@@ -100,6 +114,10 @@ u_reg = regions(u_thlv)
 v_thlv = iris.load_cube(ncfile_path + 'v.thlev.4ysl.m48.nc')
 v_thlv = v_thlv.regrid(u_thlv,iris.analysis.Linear())
 v_reg = regions(v_thlv)
+lhf = iris.load_cube(ncfile_path + 'lhf.sfc.4ysl.m48.nc')
+lhf_reg = regions(lhf)
+shf = iris.load_cube(ncfile_path + 'shf.sfc.4ysl.m48.nc')
+shf_reg = regions(shf)
 
 high = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 5000 <= h <= 15000)
 low = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <= 5000)
@@ -138,7 +156,7 @@ for n, i in enumerate(rhum_reg):
     rhum_300_reg[n] = i.extract(iris.Constraint(p=300))
 
 # Make array of variables var x reg
-regarr= np.zeros((16,np.shape(temp_reg)[0]))
+regarr= np.zeros((14,np.shape(temp_reg)[0]))
 for n in xrange(np.shape(temp_reg)[0]):
     print n
     regarr[0,n] = stemp_reg[n].data[0]
@@ -153,6 +171,8 @@ for n in xrange(np.shape(temp_reg)[0]):
     regarr[9,n] = cld_high_reg[n].data
     regarr[10,n] = cld_low_reg[n].data
     regarr[11,n] = precip_reg[n].data[0]
+    regarr[12,n] = lhf_reg[n].data
+    regarr[13,n] = shf_reg[n].data
 #     regarr[12,n] = u_high_reg[n].data
 #     regarr[13,n] = u_low_reg[n].data
 #     regarr[14,n] = v_high_reg[n].data
@@ -164,7 +184,7 @@ with open('./pickles/regarr.pickle','wb') as f:
 for n in xrange(regarr.shape[0]):
     regarr[n,:] = regarr[n,:]/(regarr[n,:].std())
 
-var = np.array(['Tsfc','smc clim','T700hPa','T300hpa','RH700hPa','RH300hPa','DLWR','DSWR','smc','Cld High','Cld Low','Precip','u_high','u_low','v_high','v_low'])
+var = np.array(['Tsfc','smc clim','T700hPa','T300hpa','RH700hPa','RH300hPa','DLWR','DSWR','smc','Cld High','Cld Low','Precip','lhf','shf']) #,'u_high','u_low','v_high','v_low'])
 regs =np.array(['India','MC','TropSthAm','SthSthAm','NthWestAfr','NthEastAfr','TropAfr','SthAfr','Aus','lat10', 'latN20', 'latS20', 'latN30', 'latS30'])
 
 plt.close('all')
@@ -176,8 +196,8 @@ axes.set_xlabel('Regions')
 axes.set_ylabel('variables')
 axes.set_title('Response to Max forcing')
 plt.show()
-fig.set_size_inches(15,5)
-plt.savefig('regional_response_manyvar.eps')
+fig.set_size_inches(18,5)
+plt.savefig('./figures/regional_response_manyvar_max.eps')
 
 
 
