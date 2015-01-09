@@ -1,0 +1,28 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{epstopdf}
+
+\graphicspath{{./figures/}{../plot_twod/figures/}}
+
+\newcommand{\epsfig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.eps}}
+\newcommand{\pngfig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.png}}
+\newcommand{\pdffig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.pdf}}
+
+
+
+\begin{document}
+\section{}
+Response of variables to forcing over ocean/land, zonal average, ocean forcing 
+region masked.\\
+% \pdffig[1.0]{oc_ln_var}
+
+\pdffig[1.0]{zon_temp}
+\pdffig[1.0]{zon_rh}
+\pdffig[1.0]{zon_rad}
+\pdffig[1.0]{zon_cldprc}
+\pdffig[1.0]{zon_flux}
+
+\end{document}
+

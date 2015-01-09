@@ -19,11 +19,17 @@ ncfile_path = '/home/nicholat/project/pacemaker/ncfiles/'
 
 # import the ACCESS data using iris
 cld = iris.load_cube(ncfile_path + 'cld.thlev.4ysl.m48.nc')
+cloud_clim = iris.load_cube(ncfile_path + 'cld.thlev.4ysl.nc')
 cld.coord('Hybrid height').standard_name = 'atmosphere_hybrid_height_coordinate'
+cloud_clim.coord('Hybrid height').standard_name = 'atmosphere_hybrid_height_coordinate'
 
 # Define regions
 cld.coord('latitude').guess_bounds()
 cld.coord('longitude').guess_bounds()
+cloud_clim.coord('latitude').guess_bounds()
+cloud_clim.coord('longitude').guess_bounds()
+# define variance for cloud
+cloud_clim_var = cloud_clim.collapsed('time',iris.analysis.VARIANCE)
 
 mons = 6
 lag = 0
@@ -48,36 +54,46 @@ cld_low_min = cld_min.extract(low).collapsed('atmosphere_hybrid_height_coordinat
 cld_full_max = cld_max.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
 cld_full_min = cld_min.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
 
+cloud_var = cloud_clim_var.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
+
+cld_by_std = cld_full_max/(cloud_var)**(1/2)
+
 rhmm = 0.02
+plt.figure(1)
+qplt.pcmeshclf(cld_by_std,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite())
+plt.title('Normalized Cloud response to max positive forcing, '+str(lag)+'-'+str(mons+lag)+' months')
+# plt.savefig('figures/comp_cldfull_max.png')
+
+sys.exit()
 plt.figure(3)
 qplt.pcmeshclf(cld_high_max,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite())
 plt.title('High Cloud response to max positive forcing. '+str(lag)+'-'+str(mons+lag)+' months')
 plt.savefig('figures/comp_cldhigh_max.png')
 
-plt.figure(4)
-qplt.pcmeshclf(cld_high_min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
-plt.title('High Cloud response to min negative forcing. '+str(lag)+'-'+str(mons+lag)+' months')
-plt.savefig('figures/comp_cldhigh_min.png')
+# plt.figure(4)
+# qplt.pcmeshclf(cld_high_min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
+# plt.title('High Cloud response to min negative forcing. '+str(lag)+'-'+str(mons+lag)+' months')
+# plt.savefig('figures/comp_cldhigh_min.png')
 
 plt.figure(5)
 qplt.pcmeshclf(cld_low_max,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite())
 plt.title('Low Cloud response to max positive forcing, 700hPa. '+str(lag)+'-'+str(mons+lag)+' months')
 plt.savefig('figures/comp_cldlow_max.png')
 
-plt.figure(6)
-qplt.pcmeshclf(cld_low_min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
-plt.title('Low Cloud response to min negative forcing, 700hPa. '+str(lag)+'-'+str(mons+lag)+' months')
-plt.savefig('figures/comp_cldlow_min.png')
-
+# plt.figure(6)
+# qplt.pcmeshclf(cld_low_min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
+# plt.title('Low Cloud response to min negative forcing, 700hPa. '+str(lag)+'-'+str(mons+lag)+' months')
+# plt.savefig('figures/comp_cldlow_min.png')
+ 
 plt.figure(7)
 qplt.pcmeshclf(cld_full_max,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite())
 plt.title('All Cloud response to max positive forcing, 1000hPa. '+str(lag)+'-'+str(mons+lag)+' months')
 plt.savefig('figures/comp_cldfull_max.png')
 
-plt.figure(8)
-qplt.pcmeshclf(cld_full_min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
-plt.title('All Cloud response to min negative forcing, 1000hPa'+str(mons)+'-'+str(mons+lag)+' months')
-plt.savefig('figures/comp_cldfull_min.png')
+# plt.figure(8)
+# qplt.pcmeshclf(cld_full_min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
+# plt.title('All Cloud response to min negative forcing, 1000hPa'+str(mons)+'-'+str(mons+lag)+' months')
+# plt.savefig('figures/comp_cldfull_min.png')
 
 # plt.figure(3)
 # qplt.pcmeshclf(RH300max - RH300min,vmin=-1,vmax=1,cmap=mc.jetwhite())

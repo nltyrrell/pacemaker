@@ -54,18 +54,64 @@ uv_uptrop_max = ta.iristropave(uv_div,plev_bottom=500,plev_top=200)[max_i:max_f,
 uv_midtrop_max = ta.iristropave(uv_div,plev_bottom=850,plev_top=500)[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
 uv_lowtrop_max = ta.iristropave(uv_div,plev_bottom=1000,plev_top=850)[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
 
-vmm = 5e-7
-# qplt.pcmeshclf(uv_uptrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
-# plt.title('Divergent wind, 500-200hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
-# plt.savefig('./figures/divwind_uptrop_max.png')
-# qplt.pcmeshclf(uv_midtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
-# plt.title('Divergent wind, 850-500hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
-# plt.savefig('./figures/divwind_midtrop_max.png')
-# qplt.pcmeshclf(uv_lowtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
-# plt.title('Divergent wind, 1000-850hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
-# plt.savefig('./figures/divwind_lowtrop_max.png')
+u_uptrop_max = ta.iristropave(u,plev_bottom=500,plev_top=200)[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
+u_midtrop_max = ta.iristropave(u,plev_bottom=850,plev_top=500)[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
+u_lowtrop_max = ta.iristropave(u,plev_bottom=1000,plev_top=850)[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
+v_uptrop_max = ta.iristropave(v,plev_bottom=500,plev_top=200)[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
+v_midtrop_max = ta.iristropave(v,plev_bottom=850,plev_top=500)[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
+v_lowtrop_max = ta.iristropave(v,plev_bottom=1000,plev_top=850)[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
+
+u_uptrop_min = ta.iristropave(u,plev_bottom=500,plev_top=200)[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
+u_midtrop_min = ta.iristropave(u,plev_bottom=850,plev_top=500)[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
+u_lowtrop_min = ta.iristropave(u,plev_bottom=1000,plev_top=850)[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
+v_uptrop_min = ta.iristropave(v,plev_bottom=500,plev_top=200)[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
+v_midtrop_min = ta.iristropave(v,plev_bottom=850,plev_top=500)[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
+v_lowtrop_min = ta.iristropave(v,plev_bottom=1000,plev_top=850)[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
+
+vmm = 3
+plt.figure(1)
+qplt.pcmeshclf(u_uptrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+plt.title('Eastward wind, 500-200hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+plt.savefig('./figures/u_uptrop_max.pdf')
+plt.figure(2)
+qplt.pcmeshclf(u_midtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+plt.title('Eastward wind, 850-500hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+plt.savefig('./figures/u_midtrop_max.pdf')
+plt.figure(3)
+qplt.pcmeshclf(u_lowtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+plt.title('Eastward wind, 1000-850hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+plt.savefig('./figures/u_lowtrop_max.pdf')
+
+vmm = 1
+plt.figure(4)
+qplt.pcmeshclf(v_uptrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+plt.title('Northward wind, 500-200hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+plt.savefig('./figures/v_uptrop_max.pdf')
+plt.figure(5)
+qplt.pcmeshclf(v_midtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+plt.title('Northward wind, 850-500hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+plt.savefig('./figures/v_midtrop_max.pdf')
+plt.figure(6)
+qplt.pcmeshclf(v_lowtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+plt.title('Northward wind, 1000-850hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+plt.savefig('./figures/v_lowtrop_max.pdf')
 
 sys.exit('exit')
+
+vmm = 5e-7
+plt.figure(1)
+qplt.pcmeshclf(uv_uptrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+plt.title('Divergent wind, 500-200hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+# plt.savefig('./figures/divwind_uptrop_max.pdf')
+plt.figure(2)
+qplt.pcmeshclf(uv_midtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+plt.title('Divergent wind, 850-500hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+# plt.savefig('./figures/divwind_midtrop_max.png')
+plt.figure(3)
+qplt.pcmeshclf(uv_lowtrop_max,vmin=-vmm,vmax=vmm,cmap=mc.jetwhite())
+plt.title('Divergent wind, 1000-850hPa, Max forcing '+str(lag)+' '+str(lag+mons)+'months')
+# plt.savefig('./figures/divwind_lowtrop_max.png')
+
 
 nlat = 9
 latmax = 40

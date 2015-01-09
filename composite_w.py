@@ -80,14 +80,14 @@ for lat  in xrange(0,latmax+1,5):
     qplt.plot(500*LSMNH,linewidth=2,color='k')
     latstr = str(wNH_max.coord('latitude').points[0])
     plt.title(wNH_max.standard_name+' '+latstr+' max forcing')
-    plt.savefig('./figures/w_lat'+latstr+'.png')
+    plt.savefig('./figures/w_lat'+latstr+'.pdf')
 
     plt.clf()
     qplt.contourf(wSH_max,levels=np.linspace(-0.0025,0.0025,51),cmap=plt.cm.seismic,extend='both')
     latstr = str(wSH_max.coord('latitude').points[0])
     qplt.plot(500*LSMSH,linewidth=2,color='k')
     plt.title(wSH_max.standard_name+', lat:'+latstr+', max forcing')
-    plt.savefig('./figures/w_lat'+latstr+'.png')
+    plt.savefig('./figures/w_lat'+latstr+'.pdf')
 
 #     hold[0,i,:,0]   = WNH[max_i:max_f,::].collapsed('time',iris.analysis.MEAN).data
 #     hold[0,i,:,1]   = TO_forc_meanSH[max_i:max_f,::].collapsed('time',iris.analysis.MEAN).data

@@ -56,6 +56,12 @@ min_f = min_i + mons
 # gpht_minG_mean  = gpht[min_i:min_f,0,::].collapsed('t',iris.analysis.MEAN)
 # Gmin            = gpht_minG_mean
 
+gpht_500            = gpht_plv.extract(iris.Constraint(air_pressure=500))
+gpht_500_maxG_mean  = gpht_500[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
+G500max             = gpht_500_maxG_mean
+gpht_500_minG_mean  = gpht_500[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
+G500min             = gpht_500_minG_mean
+
 gpht_300            = gpht_plv.extract(iris.Constraint(air_pressure=300))
 gpht_300_maxG_mean  = gpht_300[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
 G300max             = gpht_300_maxG_mean
@@ -85,20 +91,21 @@ G700min             = gpht_700_minG_mean
 # 
 gpmm = 50
 plt.figure(3)
-qplt.pcmeshclf(G300max,vmin=-gpmm,vmax=gpmm,cmap=mc.jetwhite())
-plt.title('GPHT response to max positive forcing, 300hPa')
-plt.savefig('figures/comp_GPHTmax_300.png')
+qplt.pcmeshclf(G500max,vmin=-gpmm,vmax=gpmm,cmap=mc.jetwhite())
+plt.title('GPHT response to max positive forcing, 500hPa')
+plt.savefig('figures/comp_GPHTmax_500.pdf')
 
 plt.figure(4)
-qplt.pcmeshclf(G300min,vmin=-gpmm,vmax=gpmm,cmap=mc.jetwhite_r())
-plt.title('GPHT response to min negative forcing, 300hPa')
-plt.savefig('figures/comp_GPHTmin_300.png')
+qplt.pcmeshclf(G300max,vmin=-gpmm,vmax=gpmm,cmap=mc.jetwhite_r())
+plt.title('GPHT response to max negative forcing, 300hPa')
+plt.savefig('figures/comp_GPHTmax_300.png')
 
 plt.figure(5)
 qplt.pcmeshclf(G700max,vmin=-gpmm,vmax=gpmm,cmap=mc.jetwhite())
 plt.title('GPHT response to max positive forcing, 700hPa')
 plt.savefig('figures/comp_GPHTmax_700.png')
 
+sys.exit()
 plt.figure(6)
 qplt.pcmeshclf(G700min,vmin=-gpmm,vmax=gpmm,cmap=mc.jetwhite_r())
 plt.title('GPHT response to min negative forcing, 700hPa')

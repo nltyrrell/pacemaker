@@ -1,0 +1,76 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{epstopdf}
+
+\graphicspath{{./figures/}{../plot_twod/figures/}}
+
+\newcommand{\epsfig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.eps}}
+\newcommand{\pngfig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.png}}
+\newcommand{\pdffig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.pdf}}
+
+
+
+\begin{document}
+\section{}
+\subsection{Surface, Troposphere}
+\pngfig[0.5]{comp_Tmax_sfc}
+\pdffig[0.5]{comp_RHmax_1000}
+\pngfig[0.5]{comp_Tmax_700}
+\pdffig[0.5]{comp_RHmax_700}
+\pngfig[0.5]{comp_Tmax_300}
+\pdffig[0.5]{comp_RHmax_300}
+
+\subsection{LW, SW response}
+
+\pngfig[0.5]{comp_lwclsky_max}
+\pngfig[0.5]{comp_dlwr_max}
+\pngfig[0.5]{comp_dswr_max}
+
+\subsection{Cloud/precip response}
+\pngfig[0.5]{comp_cldfull_max}
+\pngfig[0.5]{comp_precip_max}
+
+\subsection{Dynamical response}
+\pngfig[0.5]{comp_Pmax_sfc}
+\pdffig[0.5]{comp_GPHTmax_500}
+
+\pagebreak
+\subsection{u,v  response}
+\pdffig[0.5]{u_lowtrop_max}
+\pdffig[0.5]{u_midtrop_max}
+\pdffig[0.5]{u_uptrop_max}\\
+\noindent\pdffig[0.5]{v_lowtrop_max}
+\pdffig[0.5]{v_midtrop_max}
+\pdffig[0.5]{v_uptrop_max}
+
+\subsection{w response}
+\noindent\pdffig[0.5]{w_lat2.5}
+\pdffig[0.5]{w_lat-2.5}
+\pdffig[0.5]{w_lat7.5}
+\pdffig[0.5]{w_lat-7.5}
+\pdffig[0.5]{w_lat12.5}
+\pdffig[0.5]{w_lat-12.5}
+\pdffig[0.5]{w_lat17.5}
+\pdffig[0.5]{w_lat-17.5}
+\pdffig[0.5]{w_lat22.5}
+\pdffig[0.5]{w_lat-22.5}
+\pdffig[0.5]{w_lat27.5}
+\pdffig[0.5]{w_lat-27.5}
+\pdffig[0.5]{w_lat32.5}
+\pdffig[0.5]{w_lat-32.5}
+\pdffig[0.5]{w_lat37.5}
+\pdffig[0.5]{w_lat-37.5}
+\pdffig[0.5]{w_lat42.5}
+\pdffig[0.5]{w_lat-42.5}
+
+\subsection{Zonal response}
+\pdffig[1.0]{zon_temp}
+\pdffig[1.0]{zon_rh}
+\pdffig[1.0]{zon_rad}
+\pdffig[1.0]{zon_cldprc}
+\pdffig[1.0]{zon_flux}
+
+\end{document}
+
