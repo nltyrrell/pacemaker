@@ -29,7 +29,7 @@ cld.coord('longitude').guess_bounds()
 cloud_clim.coord('latitude').guess_bounds()
 cloud_clim.coord('longitude').guess_bounds()
 # define variance for cloud
-cloud_clim_var = cloud_clim.collapsed('time',iris.analysis.VARIANCE)
+cloud_clim_std = cloud_clim.collapsed('time',iris.analysis.STD_DEV)
 
 mons = 6
 lag = 0
@@ -54,9 +54,9 @@ cld_low_min = cld_min.extract(low).collapsed('atmosphere_hybrid_height_coordinat
 cld_full_max = cld_max.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
 cld_full_min = cld_min.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
 
-cloud_var = cloud_clim_var.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
+cloud_std = cloud_clim_std.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
 
-cld_by_std = cld_full_max/(cloud_var)**(1/2)
+cld_by_std = cld_full_max/(cloud_std)
 
 rhmm = 0.02
 plt.figure(1)

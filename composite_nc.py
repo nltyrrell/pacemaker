@@ -110,7 +110,7 @@ def composite_m48(cube_name, ncfile_path_in='/home/nicholat/project/pacemaker/nc
 lhf = composite_m48('lhf.sfc.4ysl.nc')
 shf = composite_m48('shf.sfc.4ysl.nc')
 
-sys.exit('all done')
+# sys.exit('all done')
 temp_cube, temp_rsc, cube = composite_m48('temp.sfc.4ysl.nc')
 smc = composite_m48('smc.sfc.4ysl.nc')
 dswr = composite_m48('dswr.sfc.4ysl.nc', ncfile_path_in='/home/nicholat/project/access/slabosc/ncfiles/')
