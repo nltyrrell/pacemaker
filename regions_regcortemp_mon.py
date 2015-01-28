@@ -80,12 +80,12 @@ def regions(cube,tsfc_cube,name2='name2'):
     Input: cube, tsfc_cube
     Output: array with all regions
     """
-#     cube = nt.remove_seascyc(cube)
-#     tsfc_cube = nt.remove_seascyc(tsfc_cube)
+    cube = nt.remove_seascyc(cube)
+    tsfc_cube = nt.remove_seascyc(tsfc_cube)
     cube = try_cube(cube)
     tsfc_cube = try_cube(tsfc_cube)
-    cube = anmeananom(cube)
-    tsfc_cube = anmeananom(tsfc_cube)
+#     cube = anmeananom(cube)
+#     tsfc_cube = anmeananom(tsfc_cube)
 
 
     if cube.ndim==4:
@@ -148,13 +148,13 @@ ncfile_path = '/home/nicholat/project/pacemaker/ncfiles/'
 # temp_plv = iris.load_cube(ncfile_path + 'temp.plv.4ysl.m48.nc')
 # temp_reg = regions(temp_plv)
 temp_sfc = iris.load_cube(ncfile_path + 'temp.sfc.4ysl.nc')
-# stemp_reg = regions(temp_sfc,temp_sfc,name2='sfc temp')
-# for n,i in enumerate(stemp_reg):
-#     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
-#     name=i.long_name.replace(" ","_")
-#     plt.savefig('./figures/'+name+'.pdf')
-# print name
-# 
+stemp_reg = regions(temp_sfc,temp_sfc,name2='sfc temp')
+for n,i in enumerate(stemp_reg):
+    qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
+    name=i.long_name.replace(" ","_")
+    plt.savefig('./figures/'+name+'.mon.pdf')
+print name
+
 rhum_plv = iris.load_cube(ncfile_path + 'rhum.plv.4ysl.nc')
 rhum_700 = rhum_plv.extract(iris.Constraint(p=700))
 rhum_300 = rhum_plv.extract(iris.Constraint(p=300))
@@ -162,14 +162,14 @@ rhum_700_reg = regions(rhum_700,temp_sfc,name2='rhum')
 for n,i in enumerate(rhum_700_reg):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 rhum_300_reg = regions(rhum_300,temp_sfc,name2='rhum')
 for n,i in enumerate(rhum_300_reg):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 smc = iris.load_cube(ncfile_path + 'smc.sfc.4ysl.nc')
@@ -177,7 +177,7 @@ smc_reg = regions(smc,temp_sfc,name2='smc')
 for n,i in enumerate(smc_reg):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 dlwr = iris.load_cube(ncfile_path + 'dlwr.sfc.4ysl.nc')
@@ -185,7 +185,7 @@ dlwr_reg = regions(dlwr,temp_sfc,name2='dlwr')
 for n,i in enumerate(dlwr_reg):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 dswr = iris.load_cube(ncfile_path + 'dswr.sfc.4ysl.nc')
@@ -193,7 +193,7 @@ dswr_reg = regions(dswr,temp_sfc,name2='dswr')
 for n,i in enumerate(dswr_reg):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 precip = iris.load_cube(ncfile_path + 'precip.4ysl.nc')
@@ -201,7 +201,7 @@ precip_reg = regions(precip,temp_sfc,name2='precip')
 for n,i in enumerate(precip_reg):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 
@@ -220,7 +220,7 @@ full = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <=
 # for n,i in enumerate(cld_reg):
 #     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
 #     name=i.long_name.replace(" ","_")
-#     plt.savefig('./figures/'+name+'.pdf')
+#     plt.savefig('./figures/'+name+'.mon.pdf')
 # print name
 
 
@@ -254,60 +254,60 @@ u_reg_low = regions(u_low,temp_sfc,name2='u_low')
 for n,i in enumerate(u_reg_low):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 v_reg_low = regions(v_low,temp_sfc,name2='v_low')
 for n,i in enumerate(v_reg_low):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 w_reg_low = regions(w_low,temp_sfc,name2='w_low')
 for n,i in enumerate(w_reg_low):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 u_reg_high = regions(u_high,temp_sfc,name2='u_hig')
 for n,i in enumerate(u_reg_high):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 v_reg_high = regions(v_high,temp_sfc,name2='v_high')
 for n,i in enumerate(v_reg_high):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
 w_reg_high = regions(w_high,temp_sfc,name2='w_high')
 for n,i in enumerate(w_reg_high):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
     name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
+    plt.savefig('./figures/'+name+'.mon.pdf')
 print name
 
-# lhf = iris.load_cube(ncfile_path + 'lhf.sfc.4ysl.nc')
-# lhf_reg = regions(lhf,temp_sfc,name2='lhf')
-# for n,i in enumerate(lhf_reg):
-#     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
-#     name=i.long_name.replace(" ","_")
-#     plt.savefig('./figures/'+name+'.pdf')
-# print name
-# 
-# shf = iris.load_cube(ncfile_path + 'shf.sfc.4ysl.nc')
-# shf_reg = regions(shf,temp_sfc,name2='shf')
-# for n,i in enumerate(shf_reg):
-#     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
-#     name=i.long_name.replace(" ","_")
-#     plt.savefig('./figures/'+name+'.pdf')
-# print name
-# 
+lhf = iris.load_cube(ncfile_path + 'lhf.sfc.4ysl.nc')
+lhf_reg = regions(lhf,temp_sfc,name2='lhf')
+for n,i in enumerate(lhf_reg):
+    qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
+    name=i.long_name.replace(" ","_")
+    plt.savefig('./figures/'+name+'.mon.pdf')
+print name
+
+shf = iris.load_cube(ncfile_path + 'shf.sfc.4ysl.nc')
+shf_reg = regions(shf,temp_sfc,name2='shf')
+for n,i in enumerate(shf_reg):
+    qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
+    name=i.long_name.replace(" ","_")
+    plt.savefig('./figures/'+name+'.mon.pdf')
+print name
+
 
 
 
