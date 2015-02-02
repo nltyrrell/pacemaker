@@ -164,7 +164,6 @@ for n,i in enumerate(rhum_700_reg):
     name=i.long_name.replace(" ","_")
     plt.savefig('./figures/'+name+'.pdf')
 print name
-
 rhum_300_reg = regions(rhum_300,temp_sfc,name2='rhum')
 for n,i in enumerate(rhum_300_reg):
     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
