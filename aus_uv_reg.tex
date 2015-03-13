@@ -1,0 +1,36 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{epstopdf}
+
+\graphicspath{{./figures/}{../amip_ens/figures/}}
+
+\newcommand{\epsfig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.eps}}
+\newcommand{\pngfig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.png}}
+\newcommand{\pdffig}[2][0.5]{\includegraphics[width=#1\textwidth]{{#2}.pdf}}
+
+
+
+\begin{document}
+\section{Lin Regression, Annual Means}
+\subsection{wind correlations}
+u - Eastward Wind\\
+Positive correlation: High Sfc temp correlated with increased eastward winds.\\
+Negative correlation: High Sfc temp correlated with increased westward winds.\\
+v - Northward Wind\\
+Positive correlation: High Sfc temp correlated with increased Northward winds.\\
+Negative correlation: High Sfc temp correlated with increased Southward winds.\\
+\pdffig[0.5]{Lin_Regression_Aus_tsfc_u_hig}
+\pdffig[0.5]{Lin_Regression_Aus_tsfc_u_low}
+\pdffig[0.5]{Lin_Regression_Aus_tsfc_v_high}
+\pdffig[0.5]{Lin_Regression_Aus_tsfc_v_low}
+
+\pdffig{Lin_Regression_Aus_tsfc_u_low.amip.ens2}
+\pdffig{Lin_Regression_Aus_tsfc_v_low.amip.ens2}
+
+
+
+
+\end{document}
+

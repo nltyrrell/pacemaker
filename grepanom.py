@@ -84,7 +84,7 @@ def plot_funct(cubes,vmin,vmax,sig=0.10,hatches=False):
     name=reg.long_name.replace(" ","_")
     plt.savefig('./figures/'+name+'.amip.ens2.pdf')
 
-def regions(cube,tsfc_cube,name2='name2'):
+def regions(cube,tsfc_cube,name2='name2',anom=False):
     """
     Calculates a regression between variable and tsfc for different regions
     Input: cube, tsfc_cube
@@ -94,8 +94,9 @@ def regions(cube,tsfc_cube,name2='name2'):
 #     tsfc_cube = nt.remove_seascyc(tsfc_cube)
     cube = try_cube(cube)
     tsfc_cube = try_cube(tsfc_cube)
-    cube = anmeananom(cube)
-    tsfc_cube = anmeananom(tsfc_cube)
+    if anom == False:
+        cube = anmeananom(cube)
+        tsfc_cube = anmeananom(tsfc_cube)
 
 
     if cube.ndim==4:
@@ -105,8 +106,11 @@ def regions(cube,tsfc_cube,name2='name2'):
     lsmask = iris.load_cube(ncfile_path + 'lsmask.nc')[0,0,::]
     landmask = ~(ma.make_mask(lsmask.data.copy()) + np.zeros(cube.shape)).astype(bool) # mask sea, show land
     seamask = (ma.make_mask(lsmask.data.copy()) + np.zeros(cube.shape)).astype(bool) # mask land, show sea
+    print 'seamask and ocean_cube shape'
+    print seamask.shape
 
     ocean_cube = tsfc_cube.copy()
+    print ocean_cube.shape
     land_cube = tsfc_cube.copy()
     ocean_cube.data = ma.array(ocean_cube.data, mask=seamask)
     land_cube.data = ma.array(land_cube.data, mask=landmask)
@@ -164,6 +168,40 @@ temp_sfc = iris.load_cube(ncfile_path + 'temp.sfc.4ysl.nc')
 #     name=i.long_name.replace(" ","_")
 #     plt.savefig('./figures/'+name+'.pdf')
 # print name
+var = 'cld'
+
+if var == 'smc':
+    smc = iris.load_cube(ncfile_path + 'smc.sfc.4ysl.nc')
+    smc_reg = regions(smc,temp_sfc,name2='smc')
+    smc_anom = smc_reg[0][0]
+    smc_anom.units = iris.unit.Unit(1)
+    smc_anom = smc_anom/180
+    iris.save(smc_anom,'smc_reg_aus.nc')
+#     for n,i in enumerate(smc_reg):
+#         qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
+#         name=i.long_name.replace(" ","_")
+    #     plt.savefig('./figures/'+name+'.pdf')
+
+if var == 'cld':
+    cld = iris.load_cube(ncfile_path + 'cld.thlev.4ysl.nc')
+    try:
+        cld.coord('Hybrid height').standard_name = 'atmosphere_hybrid_height_coordinate'
+    except:
+        pass
+    cld = try_cube(cld)
+    temp_sfc = try_cube(temp_sfc)
+    cld = anmeananom(cld)
+    tsfc_anom = anmeananom(temp_sfc)
+    full = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <= 15000)
+    cld_full = cld.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
+    cld_reg = regions(cld_full,tsfc_anom,name2='cld',anom=True)
+    iris.save(cld_reg[0][0],'cld_reg_aus.nc')
+#     for n,i in enumerate(cld_reg):
+#         qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
+#         name=i.long_name.replace(" ","_")
+#         plt.savefig('./figures/'+name+'.pdf')
+#     print name
+
 # 
 # rhum_plv = iris.load_cube(ncfile_path + 'rhum.plv.4ysl.nc')
 # rhum_700 = rhum_plv.extract(iris.Constraint(p=700))
@@ -182,13 +220,6 @@ temp_sfc = iris.load_cube(ncfile_path + 'temp.sfc.4ysl.nc')
 #     plt.savefig('./figures/'+name+'.pdf')
 # print name
 # 
-smc = iris.load_cube(ncfile_path + 'smc.sfc.4ysl.nc')
-smc_reg = regions(smc,temp_sfc,name2='smc')
-for n,i in enumerate(smc_reg):
-    qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
-    name=i.long_name.replace(" ","_")
-    plt.savefig('./figures/'+name+'.pdf')
-print name
 # 
 # dlwr = iris.load_cube(ncfile_path + 'dlwr.sfc.4ysl.nc')
 # dlwr_reg = regions(dlwr,temp_sfc,name2='dlwr')
@@ -220,18 +251,6 @@ print name
 # low = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <= 5000)
 # full = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <= 15000)
 # 
-# cld = iris.load_cube(ncfile_path + 'cld.thlev.4ysl.nc')
-# try:
-#     cld.coord('Hybrid height').standard_name = 'atmosphere_hybrid_height_coordinate'
-# except:
-#     pass
-# cld_full = cld.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
-# cld_reg = regions(cld_full,temp_sfc,name2='cld')
-# for n,i in enumerate(cld_reg):
-#     qplt.pcmeshclf(i,vmin=-0.7,vmax=0.7,cmap=mc.jetwhite())
-#     name=i.long_name.replace(" ","_")
-#     plt.savefig('./figures/'+name+'.pdf')
-# print name
 
 
 # u = iris.load_cube(ncfile_path + 'u.thlev.4ysl.regrid.nc')
