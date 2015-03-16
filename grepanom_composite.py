@@ -14,23 +14,10 @@ import troposave as ta
 # Load in RHsfc, RHtropos (or RH300hPa?)
 # calculate the regression between the timeseries
 # RHsfc = alpha * RHtropo + epsilon
+var = 'uv' #'uv' #'cld' # cloud, smc, or u&v
+mm = 'max' # max or min forcing
 
 ncfile_path = '/home/nicholat/project/pacemaker/ncfiles/'
-
-# import the ACCESS data using iris
-cld = iris.load_cube(ncfile_path + 'cld.thlev.4ysl.m48.nc')
-cloud_clim = iris.load_cube(ncfile_path + 'cld.thlev.4ysl.nc')
-cld.coord('Hybrid height').standard_name = 'atmosphere_hybrid_height_coordinate'
-cloud_clim.coord('Hybrid height').standard_name = 'atmosphere_hybrid_height_coordinate'
-
-# Define regions
-cld.coord('latitude').guess_bounds()
-cld.coord('longitude').guess_bounds()
-cloud_clim.coord('latitude').guess_bounds()
-cloud_clim.coord('longitude').guess_bounds()
-# define variance for cloud
-cloud_clim_std = cloud_clim.collapsed('time',iris.analysis.STD_DEV)
-
 mons = 6
 lag = 0
 max_i = 35 + lag
@@ -38,72 +25,95 @@ max_f = max_i + mons
 min_i = 11 + lag
 min_f = min_i + mons
 
-high = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 5000 <= h <= 15000)
-low = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <= 5000)
-full = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <= 10000)
+if var == 'cld':
+    # import the ACCESS data using iris
+    cld = iris.load_cube(ncfile_path + 'cld.thlev.4ysl.m48.nc')
+    cloud_clim = iris.load_cube(ncfile_path + 'cld.thlev.4ysl.nc')
+    cld.coord('Hybrid height').standard_name = 'atmosphere_hybrid_height_coordinate'
+    cloud_clim.coord('Hybrid height').standard_name = 'atmosphere_hybrid_height_coordinate'
 
-cld_max            = cld[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
-cld_min            = cld[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
+    # Define regions
+    cld.coord('latitude').guess_bounds()
+    cld.coord('longitude').guess_bounds()
+    cloud_clim.coord('latitude').guess_bounds()
+    cloud_clim.coord('longitude').guess_bounds()
 
-cld_high_max = cld_max.extract(high).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
-cld_high_min = cld_min.extract(high).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
+    high = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 5000 <= h <= 15000)
+    low = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <= 5000)
+    full = iris.Constraint(atmosphere_hybrid_height_coordinate = lambda h: 0 <= h <= 10000)
 
-cld_low_max = cld_max.extract(low).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
-cld_low_min = cld_min.extract(low).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
+    if mm == 'max':
+        cld_max = cld[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
+    if mm == 'min':
+        cld_max = cld[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
 
-cld_full_max = cld_max.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
-cld_full_min = cld_min.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
+    cld_high_max = cld_max.extract(high).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
+    cld_low_max = cld_max.extract(low).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
+    cld_full_max = cld_max.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
 
-cloud_std = cloud_clim_std.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
+    cld_high_max.units = iris.unit.Unit(1)
+    cld_low_max.units = iris.unit.Unit(1)
+    cld_full_max.units = iris.unit.Unit(1)
+    cld_high_max.long_name = 'cloud cover'
+    cld_low_max.long_name = 'cloud cover'
+    cld_full_max.long_name = 'cloud cover'
 
-cld_by_std = cld_full_max/(cloud_std)
-
-rhmm = 0.02
-plt.figure(1)
-qplt.pcmeshclf(cld_by_std,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite())
-plt.title('Normalized Cloud response to max positive forcing, '+str(lag)+'-'+str(mons+lag)+' months')
-# plt.savefig('figures/comp_cldfull_max.png')
-
-sys.exit()
-plt.figure(3)
-qplt.pcmeshclf(cld_high_max,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite())
-plt.title('High Cloud response to max positive forcing. '+str(lag)+'-'+str(mons+lag)+' months')
-plt.savefig('figures/comp_cldhigh_max.png')
-
-# plt.figure(4)
-# qplt.pcmeshclf(cld_high_min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
-# plt.title('High Cloud response to min negative forcing. '+str(lag)+'-'+str(mons+lag)+' months')
-# plt.savefig('figures/comp_cldhigh_min.png')
-
-plt.figure(5)
-qplt.pcmeshclf(cld_low_max,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite())
-plt.title('Low Cloud response to max positive forcing, 700hPa. '+str(lag)+'-'+str(mons+lag)+' months')
-plt.savefig('figures/comp_cldlow_max.png')
-
-# plt.figure(6)
-# qplt.pcmeshclf(cld_low_min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
-# plt.title('Low Cloud response to min negative forcing, 700hPa. '+str(lag)+'-'+str(mons+lag)+' months')
-# plt.savefig('figures/comp_cldlow_min.png')
- 
-plt.figure(7)
-qplt.pcmeshclf(cld_full_max,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite())
-plt.title('All Cloud response to max positive forcing, 1000hPa. '+str(lag)+'-'+str(mons+lag)+' months')
-plt.savefig('figures/comp_cldfull_max.png')
-
-# plt.figure(8)
-# qplt.pcmeshclf(cld_full_min,vmin=-rhmm,vmax=rhmm,cmap=mc.jetwhite_r())
-# plt.title('All Cloud response to min negative forcing, 1000hPa'+str(mons)+'-'+str(mons+lag)+' months')
-# plt.savefig('figures/comp_cldfull_min.png')
-
-# plt.figure(3)
-# qplt.pcmeshclf(RH300max - RH300min,vmin=-1,vmax=1,cmap=mc.jetwhite())
-# plt.savefig('figures/reg_RH_sfc_RH_sfc.png')
+    iris.save(cld_full_max,'./ncfiles/cld_full_companom_max.nc')
+    iris.save(cld_low_max,'./ncfiles/cld_low_companom_max.nc')
+    iris.save(cld_high_max,'./ncfiles/cld_high_companom_max.nc')
 
 
 
+if var == 'smc':
+    
+    smc = iris.load_cube(ncfile_path + 'smc.sfc.4ysl.m48.nc')
+    smc_clim = iris.load_cube(ncfile_path + 'smc.sfc.4ysl.nc')
+
+    # Define regions
+    smc.coord('latitude').guess_bounds()
+    smc.coord('longitude').guess_bounds()
+
+    if mm == 'max':
+        smc_max            = smc[max_i:max_f,0,::].collapsed('time',iris.analysis.MEAN)
+    if mm == 'min':
+        smc_max            = smc[min_i:min_f,0,::].collapsed('time',iris.analysis.MEAN)
+
+    smc_max.units = iris.unit.Unit(1)
+    smc_max.long_name = 'soil moisture'
+    iris.save(smc_max,'./ncfiles/smc_companom_max.nc')
 
 
+if var == 'uv':
+    u = iris.load_cube(ncfile_path + 'u.plev.4ysl.m48.nc')
+    v = iris.load_cube(ncfile_path + 'v.plev.4ysl.m48.nc')
 
+    u.coord('Pressure').standard_name = 'air_pressure'
+    v.coord('Pressure').standard_name = 'air_pressure'
+    pressure = u.coord('air_pressure').points
+
+    # Define regions
+    u.coord('latitude').guess_bounds()
+    u.coord('longitude').guess_bounds()
+    v.coord('latitude').guess_bounds()
+    v.coord('longitude').guess_bounds()
+    u.standard_name = 'eastward_wind' 
+    v.standard_name = 'northward_wind' 
+
+    plev_850 = iris.Constraint(air_pressure = 850)
+
+    u_850 = u.extract(plev_850)
+    if mm == 'max':
+        u_850_max = u_850[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
+    if mm == 'min':
+        u_850_max = u_850[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
+    iris.save(u_850_max,'./ncfiles/u_850_companom_max.nc')
+
+    v_850 = v.extract(plev_850)
+    if mm == 'max':
+        v_850_max = v_850[max_i:max_f,::].collapsed('time',iris.analysis.MEAN)
+    if mm == 'min':
+        v_850_max = v_850[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
+    iris.save(v_850_max,'./ncfiles/v_850_companom_max.nc')
 
 
 
