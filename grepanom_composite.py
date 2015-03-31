@@ -14,7 +14,7 @@ import troposave as ta
 # Load in RHsfc, RHtropos (or RH300hPa?)
 # calculate the regression between the timeseries
 # RHsfc = alpha * RHtropo + epsilon
-var = 'uv' #'uv' #'cld' # cloud, smc, or u&v
+var = 'sst'# 'cld'# 'smc'# 'uv'# cloud, smc, or u&v
 mm = 'max' # max or min forcing
 
 ncfile_path = '/home/nicholat/project/pacemaker/ncfiles/'
@@ -24,6 +24,24 @@ max_i = 35 + lag
 max_f = max_i + mons
 min_i = 11 + lag
 min_f = min_i + mons
+
+if var == 'sst':
+    
+    sst = iris.load_cube(ncfile_path + 'temp.sfc.4ysl.m48.nc')
+
+    # Define regions
+    sst.coord('latitude').guess_bounds()
+    sst.coord('longitude').guess_bounds()
+
+    if mm == 'max':
+        sst_max            = sst[max_i:max_f,0,::].collapsed('time',iris.analysis.MEAN)
+    if mm == 'min':
+        sst_max            = sst[min_i:min_f,0,::].collapsed('time',iris.analysis.MEAN)
+
+#     sst_max.units = iris.unit.Unit('K')
+    sst_max.long_name = 'sst'
+    iris.save(sst_max,'./ncfiles/sst_companom_max.nc')
+
 
 if var == 'cld':
     # import the ACCESS data using iris
@@ -47,9 +65,9 @@ if var == 'cld':
     if mm == 'min':
         cld_max = cld[min_i:min_f,::].collapsed('time',iris.analysis.MEAN)
 
-    cld_high_max = cld_max.extract(high).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
-    cld_low_max = cld_max.extract(low).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
-    cld_full_max = cld_max.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.MEAN)
+    cld_high_max = cld_max.extract(high).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.SUM)
+    cld_low_max = cld_max.extract(low).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.SUM)
+    cld_full_max = cld_max.extract(full).collapsed('atmosphere_hybrid_height_coordinate',iris.analysis.SUM)
 
     cld_high_max.units = iris.unit.Unit(1)
     cld_low_max.units = iris.unit.Unit(1)
@@ -80,6 +98,7 @@ if var == 'smc':
 
     smc_max.units = iris.unit.Unit(1)
     smc_max.long_name = 'soil moisture'
+    smc_max = smc_max/100
     iris.save(smc_max,'./ncfiles/smc_companom_max.nc')
 
 
